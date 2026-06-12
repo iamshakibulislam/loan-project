@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Atlas Fund Capital — Premium business funding up to $20M. A private consortium of institutional capital providers. Discover your funding potential in moments.">
+  <title>Atlas Fund Capital | Premium Business Funding</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <header class="header">
+    <div class="container header-inner">
+      <a href="/" class="logo">
+        <span class="logo-icon">A</span>
+        Atlas Fund Capital
+      </a>
+      <nav class="nav">
+        <ul class="nav-list">
+          <li class="nav-item">
+            <span class="nav-link">Financing Solutions <span class="arrow">▼</span></span>
+            <div class="dropdown">
+              <a href="/product/merchant-cash-advance/" class="dropdown-link">Revenue-Based Financing</a>
+              <a href="/product/line-of-credit/" class="dropdown-link">Business Line of Credit</a>
+              <a href="/product/sba-loans/" class="dropdown-link">SBA Loans</a>
+              <a href="/product/term-loans/" class="dropdown-link">Term Loans</a>
+              <a href="/product/equipment-financing/" class="dropdown-link">Equipment Financing</a>
+              <a href="/product/invoice-factoring/" class="dropdown-link">Invoice Factoring</a>
+              <a href="/product/business-acquisition/" class="dropdown-link">Business Acquisition</a>
+            </div>
+          </li>
+          <li class="nav-item"><a href="/about/" class="nav-link">About</a></li>
+          <li class="nav-item"><a href="/how-it-works/" class="nav-link">How It Works</a></li>
+          <li class="nav-item"><a href="/resources/" class="nav-link">Resources</a></li>
+          <li class="nav-item"><a href="/blog/" class="nav-link">Insights</a></li>
+        </ul>
+      </nav>
+      <div class="header-ctas">
+        <a href="/partner/login/" class="btn btn-outline">Partner Login</a>
+        <a href="#heroForm" class="btn btn-gold">Apply Now</a>
+      </div>
+      <button class="mobile-toggle" id="mobileToggle" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+    <div class="mobile-menu" id="mobileMenu">
+      <span class="nav-link">Financing Solutions <span class="arrow">▼</span></span>
+      <div class="dropdown">
+        <a href="/product/merchant-cash-advance/" class="dropdown-link">Revenue-Based Financing</a>
+        <a href="/product/line-of-credit/" class="dropdown-link">Business Line of Credit</a>
+        <a href="/product/sba-loans/" class="dropdown-link">SBA Loans</a>
+        <a href="/product/term-loans/" class="dropdown-link">Term Loans</a>
+        <a href="/product/equipment-financing/" class="dropdown-link">Equipment Financing</a>
+        <a href="/product/invoice-factoring/" class="dropdown-link">Invoice Factoring</a>
+        <a href="/product/business-acquisition/" class="dropdown-link">Business Acquisition</a>
+      </div>
+      <a href="/about/" class="nav-link">About</a>
+      <a href="/how-it-works/" class="nav-link">How It Works</a>
+      <a href="/resources/" class="nav-link">Resources</a>
+      <a href="/blog/" class="nav-link">Insights</a>
+      <a href="/partner/login/" class="nav-link">Partner Login</a>
+      <a href="#heroForm" class="nav-link" style="color:var(--accent);font-weight:700;">Apply Now</a>
+    </div>
+  </header>
+
+  <!-- Hero with Multi-Step Lead Capture -->
+  <section class="hero" id="heroForm">
+    <div class="hero-orb orb-1"></div>
+    <div class="hero-orb orb-2"></div>
+    <div class="hero-orb orb-3"></div>
+    <div class="container">
+      <div class="hero-form-wrapper">
+        <h1>Capital that moves at the <em>speed of your ambition.</em></h1>
+        <p class="hero-subtitle">Business funding up to $20 million. Discover your options in under 60 seconds.</p>
+
+        <!-- Step 1: Amount + Revenue -->
+        <div class="form-step active" data-step="1">
+          <div class="form-field">
+            <label for="fundingAmount">How much money do you need?</label>
+            <input type="text" id="fundingAmount" placeholder="e.g. $150,000" required>
+          </div>
+          <div class="form-field">
+            <label for="monthlyRevenue">How much revenue does your business generate per month?</label>
+            <input type="text" id="monthlyRevenue" placeholder="e.g. $45,000" required>
+          </div>
+          <button class="btn btn-gold btn-lg form-next" type="button">Get Qualified</button>
+        </div>
+
+        <!-- Step 2: Credit Score + Time in Business -->
+        <div class="form-step" data-step="2">
+          <div class="form-field">
+            <label for="creditScore">What is your credit score?</label>
+            <input type="text" id="creditScore" placeholder="e.g. 680" required>
+          </div>
+          <div class="form-field">
+            <label for="timeInBusiness">How long have you been in business?</label>
+            <select id="timeInBusiness">
+              <option value="">Select time in business</option>
+              <option value="0-6">0 – 6 Months</option>
+              <option value="6-12">6 – 12 Months</option>
+              <option value="1-2">1 – 2 Years</option>
+              <option value="2-5">2 – 5 Years</option>
+              <option value="5-plus">5+ Years</option>
+            </select>
+          </div>
+          <button class="btn btn-gold btn-lg form-next" type="button">Continue</button>
+        </div>
+
+        <!-- Step 3: Contact Details + Consent -->
+        <div class="form-step" data-step="3">
+          <div class="form-field">
+            <label for="fullName">Full Name</label>
+            <input type="text" id="fullName" placeholder="John Smith" required>
+          </div>
+          <div class="form-field">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" placeholder="john@yourcompany.com" required>
+          </div>
+          <div class="form-field">
+            <label for="companyName">Company Name</label>
+            <input type="text" id="companyName" placeholder="Your Business, Inc." required>
+          </div>
+          <div class="form-field">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" placeholder="(555) 000-0000" required>
+          </div>
+          <div class="form-consent">
+            <input type="checkbox" id="consent" required>
+            <label for="consent">I agree to receive texts and emails from Atlas Fund Capital regarding my business loan inquiry. I understand you may use automated or AI-assisted technology to contact me. I understand my consent is not a condition of obtaining services and I can opt out at any time. <a href="/terms/">Terms &amp; Conditions</a></label>
+          </div>
+          <button class="btn btn-gold btn-lg" type="submit" id="formSubmit">Submit</button>
+        </div>
+
+        <!-- Success Message -->
+        <div class="form-success" style="display:none;">
+          <h3>Your submission has been received.</h3>
+          <p>A funding specialist from Atlas Fund Capital will review your details and reach out within one business day. No obligation, no impact to your credit.</p>
+        </div>
+
+        <div class="form-progress">Step 1 of 3</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <section class="stats">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <h3>$2.4B+</h3>
+          <p>Capital deployed to American businesses</p>
+        </div>
+        <div class="stat-item">
+          <h3>8,500+</h3>
+          <p>Businesses funded across all 50 states</p>
+        </div>
+        <div class="stat-item">
+          <h3>97%</h3>
+          <p>Client satisfaction rate year over year</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Products -->
+  <section class="section section-light">
+    <div class="container">
+      <h2 class="section-title">Financing shaped to your business, not the other way around.</h2>
+      <p class="section-subtitle">Every enterprise is distinct. Our suite of capital solutions is designed to meet you exactly where you are.</p>
+      <div class="products-grid">
+        <div class="product-card">
+          <div class="product-icon">💳</div>
+          <h3>Revenue-Based Financing</h3>
+          <p>Capital secured against your future receivables. Repayment flexes with your sales cycle — you pay more when business surges and less when it slows.</p>
+          <ul class="product-features">
+            <li>Access from $5K to $20M</li>
+            <li>Payments calibrated to daily revenue</li>
+            <li>No fixed monthly obligation</li>
+          </ul>
+          <a href="/product/merchant-cash-advance/" class="btn btn-outline">Explore This Option</a>
+        </div>
+        <div class="product-card">
+          <div class="product-icon">📊</div>
+          <h3>Business Line of Credit</h3>
+          <p>A revolving facility that sits ready when opportunity calls. Draw what you need, pay only on what you use, and access capital again as you repay.</p>
+          <ul class="product-features">
+            <li>Limits from $10K to $250K</li>
+            <li>Interest accrues only on drawn funds</li>
+            <li>Draw anytime — 24 hours a day</li>
+          </ul>
+          <a href="/product/line-of-credit/" class="btn btn-outline">Explore This Option</a>
+        </div>
+        <div class="product-card">
+          <div class="product-icon">🏛️</div>
+          <h3>SBA Loans</h3>
+          <p>Government-backed financing with the most competitive terms in the market. Extended maturities and below-prime rates for qualified enterprises.</p>
+          <ul class="product-features">
+            <li>Up to $5M through SBA programs</li>
+            <li>Rates starting from 6.5%</li>
+            <li>Terms extending to 25 years</li>
+          </ul>
+          <a href="/product/sba-loans/" class="btn btn-outline">Explore This Option</a>
+        </div>
+        <div class="product-card">
+          <div class="product-icon">📋</div>
+          <h3>Term Loans</h3>
+          <p>A straightforward capital infusion with fixed repayment schedules. Ideal for planned expansions, renovations, or strategic refinancing.</p>
+          <ul class="product-features">
+            <li>$25K to $500K available</li>
+            <li>Unwavering fixed monthly payments</li>
+            <li>Maturities from 1 to 5 years</li>
+          </ul>
+          <a href="/product/term-loans/" class="btn btn-outline">Explore This Option</a>
+        </div>
+        <div class="product-card">
+          <div class="product-icon">⚙️</div>
+          <h3>Equipment Financing</h3>
+          <p>Secure the machinery, vehicles, or technology your operations depend on. The asset itself serves as the loan's security — preserving your working capital.</p>
+          <ul class="product-features">
+            <li>Finance up to 100% of equipment cost</li>
+            <li>Decisions often rendered same day</li>
+            <li>Terms aligned to asset lifespan</li>
+          </ul>
+          <a href="/product/equipment-financing/" class="btn btn-outline">Explore This Option</a>
+        </div>
+        <div class="product-card">
+          <div class="product-icon">📄</div>
+          <h3>Invoice Factoring</h3>
+          <p>Convert your outstanding receivables into working capital immediately. Stop waiting 30, 60, or 90 days to access cash you've already earned.</p>
+          <ul class="product-features">
+            <li>Advances up to 90% of invoice value</li>
+            <li>Capital available the same day</li>
+            <li>Qualification based on your clients, not you</li>
+          </ul>
+          <a href="/product/invoice-factoring/" class="btn btn-outline">Explore This Option</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why Choose Us -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">A partnership, not a transaction.</h2>
+      <p class="section-subtitle">From first inquiry to final disbursement, you work directly with a dedicated advisor who understands your industry.</p>
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-number">1</div>
+          <h3>Effortless process</h3>
+          <p>One application. One team. Zero runaround. Your advisor manages the entire journey from qualification through funding.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">2</div>
+          <h3>Capital that keeps pace</h3>
+          <p>Lines of credit fund instantly. Term facilities can deposit same day. When opportunity doesn't wait, neither do we.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">3</div>
+          <h3>Your credit stays intact</h3>
+          <p>Our pre-qualification process leaves no footprint on your credit profile. Explore every option without consequence.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="section section-light">
+    <div class="container">
+      <h2 class="section-title">From founders who've been where you are.</h2>
+      <p class="section-subtitle">The capital matters. The partnership matters more.</p>
+      <div class="testimonials-grid">
+        <div class="testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p>"I walked in expecting a transaction and walked out with a strategic partner. The team understood my restaurant's seasonal cadence and structured a facility that actually made sense for our cash flow. We opened our second location six months later."</p>
+          <div class="testimonial-author">Elena Vasquez</div>
+          <div class="testimonial-role">Founder, Mesa Verde Hospitality Group</div>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p>"Every traditional lender I approached wanted two years of tax returns and personal collateral. Atlas looked at our contracts, our recurring revenue, and saw a business worth backing. We received funding in under 48 hours. That speed changed everything."</p>
+          <div class="testimonial-author">David Park</div>
+          <div class="testimonial-role">CEO, NorthStar Logistics</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Blog Preview -->
+  <section class="section">
+    <div class="container">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:32px;">
+        <h2 class="section-title" style="margin-bottom:0;text-align:left;">From our research desk.</h2>
+        <a href="/blog/" style="font-weight:600;font-family:var(--font);">Browse all insights →</a>
+      </div>
+      <p style="color:var(--text-light);margin-bottom:32px;font-family:var(--font);">Perspectives on capital strategy, market conditions, and the ideas shaping modern business finance.</p>
+      <div class="blog-grid">
+        <div class="blog-card">
+          <div class="blog-card-img">
+            <img src="/static/images/blog-credit-score.jpg" alt="Professional reviewing financial documents — clean corporate imagery" style="width:100%;height:100%;object-fit:cover;">
+          </div>
+          <div class="blog-card-body">
+            <div class="blog-card-category">Capital Strategy</div>
+            <h4>The Credit Score Playbook: Seven Levers That Move the Needle</h4>
+            <div class="blog-card-meta">March 4, 2026 · 7 min read</div>
+          </div>
+        </div>
+        <div class="blog-card">
+          <div class="blog-card-img">
+            <img src="/static/images/blog-loan-ready.jpg" alt="Business owner preparing documentation — professional workspace" style="width:100%;height:100%;object-fit:cover;">
+          </div>
+          <div class="blog-card-body">
+            <div class="blog-card-category">Preparation</div>
+            <h4>What Lenders Actually Look At: A Pre-Application Primer</h4>
+            <div class="blog-card-meta">February 18, 2026 · 5 min read</div>
+          </div>
+        </div>
+        <div class="blog-card">
+          <div class="blog-card-img">
+            <img src="/static/images/blog-sba-equipment.jpg" alt="Modern industrial facility — warehouse or manufacturing setting" style="width:100%;height:100%;object-fit:cover;">
+          </div>
+          <div class="blog-card-body">
+            <div class="blog-card-category">Government Programs</div>
+            <h4>Navigating SBA Financing for Capital-Intensive Industries</h4>
+            <div class="blog-card-meta">January 29, 2026 · 8 min read</div>
+          </div>
+        </div>
+        <div class="blog-card">
+          <div class="blog-card-img">
+            <img src="/static/images/blog-bad-credit-loc.jpg" alt="Entrepreneur at laptop — modern small business workspace" style="width:100%;height:100%;object-fit:cover;">
+          </div>
+          <div class="blog-card-body">
+            <div class="blog-card-category">Access to Capital</div>
+            <h4>Lines of Credit When Your Score Isn't Where You Want It</h4>
+            <div class="blog-card-meta">January 12, 2026 · 6 min read</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section section-light">
+    <div class="container">
+      <h2 class="section-title">Questions thoughtful founders ask.</h2>
+      <p class="section-subtitle">Straight answers. No jargon. No runaround.</p>
+      <div class="faq-grid">
+        <div class="faq-item">
+          <div class="faq-question">What exactly is Atlas Fund Capital? <span class="faq-toggle">▼</span></div>
+          <div class="faq-answer">We are a private capital advisory firm that connects established businesses with a carefully curated consortium of institutional funding sources. We are not a bank. We operate as your strategic intermediary — identifying, negotiating, and securing the most advantageous terms across our network on your behalf.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">How does the process actually work? <span class="faq-toggle">▼</span></div>
+          <div class="faq-answer">You begin by completing the qualification form above — it takes roughly ninety seconds. A senior funding advisor reviews your profile, identifies the institutions in our consortium best positioned to serve your needs, and presents curated options. You choose the path that fits. Most clients receive capital within one to three business days of final approval.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">What do I need to qualify? <span class="faq-toggle">▼</span></div>
+          <div class="faq-answer">Our consortium members maintain varying criteria, but the baseline typically includes: a minimum of six months of operating history, monthly revenue exceeding $10,000, and a personal credit score above 500. If your profile falls outside these parameters, we can often identify alternative pathways.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">Does this inquiry affect my credit? <span class="faq-toggle">▼</span></div>
+          <div class="faq-answer">No. Our initial assessment uses a soft inquiry that leaves no trace on your credit report. A formal credit pull occurs only if you elect to proceed with a specific financing offer, and only after you've reviewed and accepted the preliminary terms.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">How quickly can I access capital? <span class="faq-toggle">▼</span></div>
+          <div class="faq-answer">Revenue-based facilities and lines of credit can fund within the same business day. Structured term products typically settle within 24 to 72 hours. SBA-backed programs follow a longer underwriting timeline — generally two to four weeks — but deliver the most favorable long-term economics.</div>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:32px;">
+        <a href="/faqs/" class="btn btn-outline">See All Questions →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="container">
+      <h2>The capital your business deserves is waiting.</h2>
+      <p>Take sixty seconds to discover your options. No commitment. No credit impact. Just clarity.</p>
+      <a href="#heroForm" class="btn btn-gold btn-lg">Begin Qualification</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col footer-brand">
+          <a href="/" class="logo" style="color:white;">
+            <span class="logo-icon">A</span>
+            Atlas Fund Capital
+          </a>
+          <p>Capital that moves at the speed of your ambition. A private consortium of institutional capital providers serving American businesses across all fifty states.</p>
+          <address class="address">
+            444 Alaska Avenue Suite #BWM188<br>
+            Torrance, CA 90503
+          </address>
+        </div>
+        <div class="footer-col">
+          <h4>Financing Solutions</h4>
+          <ul>
+            <li><a href="/product/merchant-cash-advance/">Revenue-Based Financing</a></li>
+            <li><a href="/product/line-of-credit/">Business Line of Credit</a></li>
+            <li><a href="/product/sba-loans/">SBA Loans</a></li>
+            <li><a href="/product/term-loans/">Term Loans</a></li>
+            <li><a href="/product/equipment-financing/">Equipment Financing</a></li>
+            <li><a href="/product/invoice-factoring/">Invoice Factoring</a></li>
+            <li><a href="/product/business-acquisition/">Business Acquisition</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="/about/">About Us</a></li>
+            <li><a href="/how-it-works/">How It Works</a></li>
+            <li><a href="/blog/">Insights</a></li>
+            <li><a href="/faqs/">FAQs</a></li>
+            <li><a href="/partner/login/">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Resources</h4>
+          <ul>
+            <li><a href="/resources/">Resource Center</a></li>
+            <li><a href="/faqs/">FAQ Library</a></li>
+            <li><a href="/blog/">Capital Insights</a></li>
+            <li><a href="/partner/login/">Partner Portal</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Support</h4>
+          <ul>
+            <li><a href="/partner/login/">Contact Us</a></li>
+            <li><a href="/faqs/">FAQ</a></li>
+            <li><a href="#heroForm">Apply Now</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 Atlas Fund Capital. All rights reserved.</span>
+        <div class="footer-bottom-links">
+          <a href="/terms/">Terms of Use</a>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Cookie Policy</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/static/js/main.js"></script>
+  {% csrf_token %}
+</body>
+</html>
