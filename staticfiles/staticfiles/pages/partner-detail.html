@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block meta %}<meta name="description" content="Become an Atlas Fund Capital partner. Earn $100 per qualified lead. Get paid weekly via ACH.">{% endblock %}
+
+{% block title %}Partner Program | Atlas Fund Capital{% endblock %}
+
+{% block content %}
+<section class="page-hero"><div class="container"><h1>Partner <em>Program</em></h1><p>Earn $100 for every qualified business lead. Share your unique link. Get paid weekly.</p><div style="margin-top:24px;"><a href="/partner/signup/" class="btn btn-gold btn-lg">Become a Partner →</a></div></div></section>
+
+<section class="content-section"><div class="container">
+  <div class="content-grid">
+    <div class="content-text">
+      <h2>How the partner program works.</h2>
+      <p>You refer businesses to Atlas Fund Capital using your unique partner link. When someone submits a lead through your link — and that business is earning over $25,000 per month, has been operating for at least one year, and has a credit score of 500 or above — you earn $100. No caps. No quotas. No waiting for the deal to close.</p>
+      <p>For partners who prefer a larger upside, we also offer a pay-per-close model: 2% of the total deal size when a business you introduced closes a financing facility. Submit deals directly from your partner dashboard — our team handles the rest.</p>
+    </div>
+    <div class="content-image"><img src="{% static 'images/about-mission.jpg' %}" alt="Partner collaboration — professional business setting"></div>
+  </div>
+</div></section>
+
+<section class="section section-light"><div class="container">
+  <div class="steps-grid">
+    <div class="step-card"><div class="step-number">1</div><h3>Sign Up</h3><p>Create your free partner account in under one minute. No approval process — start immediately.</p></div>
+    <div class="step-card"><div class="step-number">2</div><h3>Share Your Link</h3><p>Receive a unique referral link. Share it anywhere — email, social media, your website. 40-day cookie tracking.</p></div>
+    <div class="step-card"><div class="step-number">3</div><h3>Get Paid Weekly</h3><p>Every qualified lead adds $100 to your wallet. Request payout when your balance exceeds $500. Paid via ACH every Friday.</p></div>
+  </div>
+</div></section>
+
+<section class="section"><div class="container">
+  <h2 class="section-title">Two ways to earn.</h2>
+  <p class="section-subtitle">Choose the model that fits how you work with your clients.</p>
+  <div class="testimonials-grid">
+    <div class="testimonial-card" style="text-align:center;">
+      <h3 style="font-size:2rem;color:var(--accent);">$100</h3>
+      <p style="font-size:1rem;font-weight:600;">Pay Per Lead</p>
+      <p style="color:var(--text-light);">Our default model. You send us qualified businesses — we pay you $100 for each one. Simple. Predictable. No waiting for deals to close.</p>
+    </div>
+    <div class="testimonial-card" style="text-align:center;">
+      <h3 style="font-size:2rem;color:var(--accent);">2%</h3>
+      <p style="font-size:1rem;font-weight:600;">Pay Per Close</p>
+      <p style="color:var(--text-light);">For partners who personally bring us the deal. Submit it through your dashboard. If it funds, you earn 2% of the total facility size.</p>
+    </div>
+  </div>
+</div></section>
+
+<section class="cta-section"><div class="container"><h2>Ready to start earning?</h2><p>Sign up takes less than a minute. Start sharing your link today.</p><a href="/partner/signup/" class="btn btn-gold btn-lg">Create Partner Account</a></div></section>
+{% endblock %}

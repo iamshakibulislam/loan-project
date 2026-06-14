@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block meta %}<meta name="description" content="Atlas Fund Capital Insights — Perspectives on capital strategy, market conditions, and the ideas shaping modern business finance.">{% endblock %}
+
+{% block title %}Insights — Atlas Fund Capital{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <h1>Atlas Fund Capital <em>Insights</em></h1>
+    <p>Perspectives on capital strategy, market conditions, and the ideas shaping modern business finance.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    {% if posts %}
+    <div class="blog-list">
+      {% for post in posts %}
+      <a href="{% url 'blog_post_detail' slug=post.slug %}" class="blog-list-item" style="text-decoration:none;color:inherit;display:block;">
+        {% if post.featured_image %}
+        <div class="blog-list-img">
+          <img src="{{ post.featured_image.url }}" alt="{{ post.title }}" style="width:100%;height:100%;object-fit:cover;">
+        </div>
+        {% endif %}
+        <div class="blog-card-category">{{ post.get_category_display }}</div>
+        <h3>{{ post.title }}</h3>
+        {% if post.excerpt %}
+        <p class="blog-list-excerpt">{{ post.excerpt|truncatewords:35 }}</p>
+        {% endif %}
+        <div class="blog-card-meta">{{ post.published_at|date:"F j, Y" }} &middot; {{ post.read_time }} min read</div>
+      </a>
+      {% endfor %}
+    </div>
+
+    {% if posts.has_other_pages %}
+    <div class="pagination">
+      {% if posts.has_previous %}
+      <a href="?page={{ posts.previous_page_number }}" class="pagination-btn">&larr; Newer</a>
+      {% endif %}
+      <span class="pagination-info">Page {{ posts.number }} of {{ posts.paginator.num_pages }}</span>
+      {% if posts.has_next %}
+      <a href="?page={{ posts.next_page_number }}" class="pagination-btn">Older &rarr;</a>
+      {% endif %}
+    </div>
+    {% endif %}
+    {% else %}
+    <div class="blog-empty">
+      <h2>No insights published yet.</h2>
+      <p>Check back soon for perspectives on capital strategy, market conditions, and the ideas shaping modern business finance.</p>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

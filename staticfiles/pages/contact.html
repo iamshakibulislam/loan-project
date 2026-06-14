@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block meta %}<meta name="description" content="Contact Atlas Fund Capital — Reach our advisory team. Phone, email, or send us a message. We respond within one business day.">{% endblock %}
+
+{% block title %}Contact Us | Atlas Fund Capital{% endblock %}
+
+{% block extra_head %}
+<style>
+  .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
+  .contact-info-item { display: flex; gap: 16px; margin-bottom: 28px; align-items: flex-start; }
+  .contact-info-item .icon { font-size: 1.5rem; flex-shrink: 0; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; background: rgba(201,168,76,0.08); border-radius: 12px; }
+  .contact-info-item h4 { font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: 700; margin-bottom: 4px; color: #0a0e27; }
+  .contact-info-item p { margin: 0; font-size: 0.95rem; color: #334155; }
+  .contact-info-item a { color: var(--accent); text-decoration: none; }
+  .contact-form { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .contact-form .full-width { grid-column: 1 / -1; }
+  .contact-form label { display: block; font-size: 0.78rem; font-weight: 700; color: #334155; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; font-family: 'Inter', sans-serif; }
+  .contact-form input, .contact-form select, .contact-form textarea { width: 100%; padding: 11px 14px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 0.92rem; font-family: 'Inter', sans-serif; transition: all 0.2s; background: white; color: #0a0e27; }
+  .contact-form input:focus, .contact-form select:focus, .contact-form textarea:focus { outline: none; border-color: #c9a84c; box-shadow: 0 0 0 3px rgba(201,168,76,0.1); }
+  .contact-form textarea { resize: vertical; min-height: 110px; }
+  .contact-form .btn { grid-column: 1 / -1; justify-self: start; }
+  .form-feedback { display: none; padding: 10px 16px; border-radius: 8px; font-size: 0.86rem; font-weight: 600; grid-column: 1 / -1; font-family: 'Inter', sans-serif; }
+  .form-feedback.success { display: block; background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; }
+  .form-feedback.error { display: block; background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+  @media (max-width: 768px) {
+    .contact-grid { grid-template-columns: 1fr; gap: 32px; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <h1>Get in <em>Touch</em></h1>
+    <p>Have a question? Our advisory team responds within one business day.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="contact-grid">
+      <div>
+        <div class="contact-info-item">
+          <div class="icon">&#x2709;&#xFE0F;</div>
+          <div>
+            <h4>Email</h4>
+            <p>contact@atlasfundcapital.com</p>
+            <p style="font-size:0.82rem;color:var(--text-light);">Response within one business day</p>
+          </div>
+        </div>
+        <div class="contact-info-item">
+          <div class="icon">&#x1F4CD;</div>
+          <div>
+            <h4>Office</h4>
+            <p>444 Alaska Avenue Suite #BWM188</p>
+            <p style="font-size:0.82rem;color:var(--text-light);">Torrance, CA 90503</p>
+          </div>
+        </div>
+        <div class="contact-info-item">
+          <div class="icon">&#x2753;</div>
+          <div>
+            <h4>FAQs</h4>
+            <p>Most common questions are answered in our <a href="/faqs/">FAQ library</a></p>
+          </div>
+        </div>
+      </div>
+      <div>
+        <h2 style="margin-bottom:20px;">Send us a message</h2>
+        <form class="contact-form" id="contactForm">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="firstName">First Name</label>
+            <input type="text" id="firstName" name="first_name" placeholder="John" required>
+          </div>
+          <div class="form-group">
+            <label for="lastName">Last Name</label>
+            <input type="text" id="lastName" name="last_name" placeholder="Smith" required>
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="john@yourcompany.com" required>
+          </div>
+          <div class="form-group">
+            <label for="phone">Phone</label>
+            <input type="tel" id="phone" name="phone" placeholder="(555) 000-0000">
+          </div>
+          <div class="form-group full-width">
+            <label for="subject">Subject</label>
+            <select id="subject" name="subject">
+              <option>Application Questions</option>
+              <option>Funding Options</option>
+              <option>Partnership Inquiry</option>
+              <option>Technical Support</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="form-group full-width">
+            <label for="message">Message</label>
+            <textarea id="message" name="message" placeholder="Tell us about your business and how we can help..." required></textarea>
+          </div>
+          <div class="form-feedback" id="formFeedback"></div>
+          <div class="full-width">
+            <button type="submit" class="btn btn-gold btn-lg" id="submitBtn">Send Message</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  document.getElementById('contactForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    var btn = document.getElementById('submitBtn');
+    var fb = document.getElementById('formFeedback');
+    btn.textContent = 'Sending...';
+    btn.disabled = true;
+    fb.className = 'form-feedback';
+    fb.textContent = '';
+    var fd = new FormData(this);
+    try {
+      var res = await fetch('/contact/', { method: 'POST', body: fd });
+      var data = await res.json();
+      if (data.success) {
+        fb.className = 'form-feedback success';
+        fb.textContent = data.message;
+        this.reset();
+      } else {
+        fb.className = 'form-feedback error';
+        fb.textContent = data.error || 'Something went wrong. Please try again.';
+      }
+    } catch(err) {
+      fb.className = 'form-feedback error';
+      fb.textContent = 'Network error. Please try again.';
+    }
+    btn.textContent = 'Send Message';
+    btn.disabled = false;
+  });
+</script>
+{% endblock %}
