@@ -13,6 +13,7 @@
 # Design
 - Use completely unique copywriting and content — do NOT copy text from loanableusa.com. Create original, human-level unique copy. Confidence: 0.85
 - Design should look premium/luxury, like a billion-dollar financial company. Confidence: 0.80
+- Blog detail pages need WordPress-level premium formatting: serif body font (Cormorant Garamond) at 1.15rem+, generous line-height (1.85-2.0), proper paragraph margins, styled blockquotes with gold left-border, dark-themed code blocks, and shadowed images. Confidence: 0.75
 - Use clean and organized folder structure for the project. Confidence: 0.75
 - Maximum funding amount offered is $20 million (not $50M). Confidence: 0.85
 
@@ -21,6 +22,9 @@
 - Exclude real estate loans dropdown and industries dropdown from navigation. Confidence: 0.80
 - Include Resources nav tab but without dropdown subpages for now. Confidence: 0.75
 - Include "Apply Now" and "Partner Login" CTA buttons in header. Confidence: 0.80
+
+# Blog Editor
+- Blog editor should allow creating new custom categories on the fly, not just selecting from predefined options. Confidence: 0.65
 
 # Dashboard
 - For admin CRUD operations (status change, edit, delete, add), update the DOM directly — do NOT use page reloads. All changes should reflect instantly inline. Confidence: 0.70
