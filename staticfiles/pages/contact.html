@@ -1,16 +1,12 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% extends "base.html" %}
+
+{% block meta %}
   <meta name="description" content="Contact Atlas Fund Capital — Reach our advisory team. Phone, email, or send us a message. We respond within one business day.">
-  <title>Contact Us | Atlas Fund Capital</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{% static 'css/style.css' %}">
-  {% csrf_token %}
+{% endblock %}
+
+{% block title %}Contact Us | Atlas Fund Capital{% endblock %}
+
+{% block extra_head %}
   <style>
     .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
     .contact-info-item { display: flex; gap: 16px; margin-bottom: 28px; align-items: flex-start; }
@@ -32,25 +28,9 @@
       .contact-grid { grid-template-columns: 1fr; gap: 32px; }
     }
   </style>
-</head>
-<body>
-  <header class="header">
-    <div class="container header-inner">
-      <a href="/" class="logo"><span class="logo-icon">A</span> Atlas Fund Capital</a>
-      <nav class="nav">
-        <ul class="nav-list">
-          <li class="nav-item"><span class="nav-link">Financing Solutions <span class="arrow">&#9660;</span></span><div class="dropdown"><a href="/product/merchant-cash-advance/" class="dropdown-link">Revenue-Based Financing</a><a href="/product/line-of-credit/" class="dropdown-link">Business Line of Credit</a><a href="/product/sba-loans/" class="dropdown-link">SBA Loans</a><a href="/product/term-loans/" class="dropdown-link">Term Loans</a><a href="/product/equipment-financing/" class="dropdown-link">Equipment Financing</a><a href="/product/invoice-factoring/" class="dropdown-link">Invoice Factoring</a><a href="/product/business-acquisition/" class="dropdown-link">Business Acquisition</a></div></li>
-          <li class="nav-item"><a href="/about/" class="nav-link">About</a></li>
-          <li class="nav-item"><a href="/how-it-works/" class="nav-link">How It Works</a></li>
-          <li class="nav-item"><a href="/resources/" class="nav-link">Resources</a></li>
-          <li class="nav-item"><a href="/blog/" class="nav-link">Insights</a></li>
-        </ul>
-      </nav>
-      <div class="header-ctas"><a href="/contact/" class="btn btn-outline">Partner Login</a><a href="/#heroForm" class="btn btn-gold">Apply Now</a></div>
-      <button class="mobile-toggle" id="mobileToggle" aria-label="Menu"><span></span><span></span><span></span></button>
-    </div>
-    <div class="mobile-menu" id="mobileMenu"><span class="nav-link">Financing Solutions <span class="arrow">&#9660;</span></span><div class="dropdown"><a href="/product/merchant-cash-advance/" class="dropdown-link">Revenue-Based Financing</a><a href="/product/line-of-credit/" class="dropdown-link">Business Line of Credit</a><a href="/product/sba-loans/" class="dropdown-link">SBA Loans</a><a href="/product/term-loans/" class="dropdown-link">Term Loans</a><a href="/product/equipment-financing/" class="dropdown-link">Equipment Financing</a><a href="/product/invoice-factoring/" class="dropdown-link">Invoice Factoring</a><a href="/product/business-acquisition/" class="dropdown-link">Business Acquisition</a></div><a href="/about/" class="nav-link">About</a><a href="/how-it-works/" class="nav-link">How It Works</a><a href="/resources/" class="nav-link">Resources</a><a href="/blog/" class="nav-link">Insights</a><a href="/contact/" class="nav-link">Partner Login</a><a href="/#heroForm" class="nav-link" style="color:var(--accent);font-weight:700;">Apply Now</a></div>
-  </header>
+{% endblock %}
+
+{% block content %}
 
   <section class="page-hero">
     <div class="container">
@@ -130,19 +110,10 @@
     </div>
   </section>
 
-  <footer class="footer">
-    <div class="container">
-      <div class="footer-grid">
-        <div class="footer-col footer-brand"><a href="/" class="logo" style="color:white;"><span class="logo-icon">A</span> Atlas Fund Capital</a><p>Capital that moves at the speed of your ambition. A private consortium of institutional capital providers serving American businesses.</p><address class="address">444 Alaska Avenue Suite #BWM188<br>Torrance, CA 90503</address></div>
-        <div class="footer-col"><h4>Financing Solutions</h4><ul><li><a href="/product/merchant-cash-advance/">Revenue-Based Financing</a></li><li><a href="/product/line-of-credit/">Business Line of Credit</a></li><li><a href="/product/sba-loans/">SBA Loans</a></li><li><a href="/product/term-loans/">Term Loans</a></li><li><a href="/product/equipment-financing/">Equipment Financing</a></li><li><a href="/product/invoice-factoring/">Invoice Factoring</a></li><li><a href="/product/business-acquisition/">Business Acquisition</a></li></ul></div>
-        <div class="footer-col"><h4>Company</h4><ul><li><a href="/about/">About Us</a></li><li><a href="/how-it-works/">How It Works</a></li><li><a href="/blog/">Insights</a></li><li><a href="/faqs/">FAQs</a></li><li><a href="/contact/">Contact</a></li></ul></div>
-        <div class="footer-col"><h4>Resources</h4><ul><li><a href="/resources/">Resource Center</a></li><li><a href="/faqs/">FAQ Library</a></li><li><a href="/blog/">Capital Insights</a></li><li><a href="/contact/">Contact</a></li></ul></div>
-        <div class="footer-col"><h4>Support</h4><ul><li><a href="/contact/">Contact Us</a></li><li><a href="/faqs/">FAQ</a></li><li><a href="/#heroForm">Apply Now</a></li></ul></div>
-      </div>
-      <div class="footer-bottom"><span>&copy; 2026 Atlas Fund Capital. All rights reserved.</span><div class="footer-bottom-links"><a href="/terms/">Terms of Use</a><a href="#">Privacy Policy</a><a href="#">Cookie Policy</a></div></div>
-    </div>
-  </footer>
-  <script src="{% static 'js/main.js' %}"></script>
+{% endblock %}
+
+{% block extra_scripts %}
+  {% csrf_token %}
   <script>
     document.getElementById('contactForm').addEventListener('submit', async function(e) {
       e.preventDefault();
@@ -172,5 +143,4 @@
       btn.disabled = false;
     });
   </script>
-</body>
-</html>
+{% endblock %}

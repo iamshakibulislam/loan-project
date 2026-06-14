@@ -36,16 +36,16 @@ def build_context(request, extra=None):
 
 def home(request):
     recent_posts = BlogPost.objects.filter(is_published=True).order_by('-published_at')[:4]
-    return render(request, 'index.html', {'recent_posts': recent_posts})
+    return render(request, 'index.html', {'recent_posts': recent_posts, 'active_page': 'home'})
 
 def about(request):
-    return render(request, 'pages/about.html')
+    return render(request, 'pages/about.html', {'active_page': 'about'})
 
 def how_it_works(request):
-    return render(request, 'pages/how-it-works.html')
+    return render(request, 'pages/how-it-works.html', {'active_page': 'how-it-works'})
 
 def faqs(request):
-    return render(request, 'pages/faqs.html')
+    return render(request, 'pages/faqs.html', {'active_page': 'faqs'})
 
 @csrf_exempt
 def contact(request):
@@ -67,7 +67,7 @@ def contact(request):
             message=message_text,
         )
         return JsonResponse({'success': True, 'message': 'Message received. We will respond within one business day.'})
-    return render(request, 'pages/contact.html', build_context(request))
+    return render(request, 'pages/contact.html', build_context(request, {'active_page': 'contact'}))
 
 def blog(request):
     posts = BlogPost.objects.filter(is_published=True).order_by('-published_at')
@@ -75,7 +75,7 @@ def blog(request):
     page_number = request.GET.get('page', 1)
     posts_page = paginator.get_page(page_number)
     return render(request, 'pages/blog.html', build_context(request, {
-        'posts': posts_page,
+        'posts': posts_page, 'active_page': 'blog',
     }))
 
 
@@ -85,13 +85,14 @@ def blog_post_detail(request, slug):
     return render(request, 'pages/blog-detail.html', build_context(request, {
         'post': post,
         'recent_posts': recent_posts,
+        'active_page': 'blog',
     }))
 
 def resources(request):
-    return render(request, 'pages/resources.html')
+    return render(request, 'pages/resources.html', {'active_page': 'resources'})
 
 def terms(request):
-    return render(request, 'pages/terms.html')
+    return render(request, 'pages/terms.html', {'active_page': 'terms'})
 
 def product_page(request, slug):
     templates = {
@@ -104,10 +105,10 @@ def product_page(request, slug):
         'business-acquisition': 'pages/business-acquisition.html',
     }
     template = templates.get(slug, 'pages/404.html')
-    return render(request, template)
+    return render(request, template, {'active_page': 'products'})
 
 def partner_detail(request):
-    return render(request, 'pages/partner-detail.html')
+    return render(request, 'pages/partner-detail.html', {'active_page': 'partner'})
 
 
 # ─── Lead Submission (Homepage Form + Referral Form) ───────────────────────────
