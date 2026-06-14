@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Super Admin | Atlas Fund Capital</title>
+  {% csrf_token %}
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root { --primary: #0a0e27; --accent: #c9a84c; --white: #fff; --cream: #faf8f2; --gray-200: #e2e8f0; --gray-700: #334155; --text-light: #6b7280; --green: #0d9488; --red: #dc2626; --font: 'Inter', sans-serif; --font-heading: 'Cormorant Garamond', serif; --sidebar-w: 260px; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font); background: #f1f5f9; color: var(--primary); overflow-x: hidden; }
+    .app { display: flex; min-height: 100vh; }
+    .sidebar { width: 0; height: 100vh; background: var(--primary); color: white; position: fixed; top: 0; left: 0; bottom: 0; overflow-x: hidden; overflow-y: auto; z-index: 150; transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; }
+    .sidebar.open { width: var(--sidebar-w); padding: 24px 20px; }
+    .sidebar h3 { font-family: var(--font-heading); font-size: 1.3rem; margin-bottom: 8px; margin-top: 0; color: var(--accent); white-space: nowrap; }
+    .sidebar .sub { font-size: 0.78rem; color: rgba(255,255,255,0.4); margin-bottom: 24px; white-space: nowrap; }
+    .sidebar a { display: block; color: rgba(255,255,255,0.6); padding: 10px 14px; border-radius: 10px; margin-bottom: 4px; text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: all 0.2s; cursor: pointer; white-space: nowrap; }
+    .sidebar a:hover, .sidebar a.active { background: rgba(255,255,255,0.08); color: white; }
+    .sidebar .logout { margin-top: auto; color: rgba(255,255,255,0.4); }
+    .sidebar .sidebar-close { position: absolute; top: 12px; right: 14px; background: rgba(255,255,255,0.1); border: none; color: rgba(255,255,255,0.7); width: 30px; height: 30px; border-radius: 8px; cursor: pointer; font-size: 1.1rem; display: none; align-items: center; justify-content: center; }
+    .sidebar.open .sidebar-close { display: flex; }
+    .sidebar-toggle { position: fixed; top: 18px; z-index: 200; width: 42px; height: 42px; background: var(--primary); color: white; border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 10px rgba(0,0,0,0.25); transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    .sidebar-toggle.closed { left: 16px; }
+    .sidebar-toggle.open { left: 276px; }
+    .sidebar-toggle:hover { background: #1a1e3a; }
+    .main { flex: 1; padding: 28px 32px 28px 52px; min-width: 0; margin-left: 0; transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    .main.shifted { margin-left: calc(var(--sidebar-w) - 52px); }
+    .main h1 { font-family: var(--font-heading); font-size: 1.8rem; margin-bottom: 24px; }
+    .stats-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 24px; }
+    .stat-card { background: white; border-radius: 12px; padding: 18px 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); text-align: center; }
+    .stat-card .val { font-size: 1.7rem; font-weight: 700; font-family: var(--font-heading); }
+    .stat-card .lbl { font-size: 0.75rem; color: var(--text-light); margin-top: 2px; }
+    .stat-card.total .val { color: var(--primary); }
+    .stat-card.pending .val { color: #b8860b; }
+    .stat-card.qualified .val { color: var(--green); }
+    .stat-card.nq .val { color: var(--red); }
+    .stat-card.archived .val { color: #64748b; }
+    .panel { background: white; border-radius: 14px; padding: 24px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .panel h2 { font-family: var(--font-heading); font-size: 1.2rem; margin-bottom: 16px; }
+    .filters { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 20px; }
+    .filters input, .filters select { padding: 8px 12px; border: 1px solid var(--gray-200); border-radius: 8px; font-size: 0.84rem; font-family: var(--font); }
+    .field-group { margin-bottom: 18px; }
+    .field-group label { display: block; font-size: 0.84rem; font-weight: 600; color: var(--gray-700); margin-bottom: 6px; }
+    .field-group input, .field-group select, .field-group textarea { width: 100%; padding: 11px 14px; border: 1px solid var(--gray-200); border-radius: 10px; font-size: 0.92rem; font-family: var(--font); transition: all 0.2s; background: white; }
+    .field-group input:focus, .field-group select:focus, .field-group textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(201,168,76,0.1); }
+    .field-group textarea { resize: vertical; min-height: 80px; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .form-grid .span2 { grid-column: 1 / -1; }
+    .form-actions { display: flex; gap: 12px; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--gray-200); }
+    .btn { display: inline-flex; align-items: center; gap: 5px; padding: 8px 16px; border-radius: 8px; font-size: 0.84rem; font-weight: 600; cursor: pointer; transition: all 0.2s; text-decoration: none; border: none; font-family: var(--font); white-space: nowrap; }
+    .btn svg { width:14px; height:14px; }
+    .btn-gold { background: var(--accent); color: var(--primary); }
+    .btn-gold:hover { background: #b08a30; }
+    .btn-outline { background: transparent; border: 1px solid var(--gray-200); color: var(--primary); }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-sm { padding: 5px 10px; font-size: 0.76rem; border-radius: 6px; }
+    .btn-red { background: #fee2e2; color: var(--red); border: 1px solid #fecaca; }
+    .btn-red:hover { background: #fecaca; }
+    .btn-green { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+
+    /* ── Table ── */
+    .table-outer { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 10px; border: 1px solid var(--gray-200); }
+    .dtable { width: 100%; min-width: 1300px; border-collapse: collapse; font-size: 0.83rem; }
+    .dtable th { text-align: left; padding: 11px 12px; border-bottom: 2px solid var(--gray-200); color: var(--text-light); font-weight: 600; font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.5px; background: #faf8f2; position: sticky; top: 0; }
+    .dtable td { padding: 10px 12px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+    .dtable tr.clickable { cursor: pointer; }
+    .dtable tr.clickable:hover td { background: #faf8f2; }
+    .dtable .cell-name { font-weight: 600; max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; }
+    .dtable .cell-email { max-width: 170px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; }
+    .dtable .cell-cmp { max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; }
+    .dtable .cell-ref { max-width: 130px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; }
+    .dtable .cell-actions { display: flex; gap: 6px; align-items: center; flex-wrap: nowrap; }
+    .dtable .cell-actions select { padding: 5px 8px; border-radius: 6px; font-size: 0.78rem; border: 1px solid var(--gray-200); font-family: var(--font); cursor: pointer; max-width: 120px; }
+
+    .badge { display: inline-block; padding: 3px 10px; border-radius: 100px; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
+    .badge-pending { background: #fef9e7; color: #b8860b; }
+    .badge-qualified { background: #e6f7f5; color: var(--green); }
+    .badge-non_qualified { background: #fef2f2; color: var(--red); }
+    .badge-archived { background: #f1f5f9; color: #64748b; }
+    .badge-reviewing { background: #ede9fe; color: #7c3aed; }
+    .badge-referral { background: #e8f2fb; color: #2563eb; }
+    .badge-direct { background: #f5f1e7; color: #92400e; }
+    .badge-partner_submitted { background: #fce7f3; color: #be185d; }
+    .badge-submitted { background: #fef9e7; color: #b8860b; }
+    .badge-approved { background: #e6f7f5; color: var(--green); }
+    .badge-rejected { background: #fef2f2; color: var(--red); }
+
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: flex-start; padding-top: 60px; }
+    .modal-overlay.active { display: flex; }
+    .modal { background: white; border-radius: 16px; padding: 32px; max-width: 600px; width: 92%; max-height: 85vh; overflow-y: auto; }
+    .modal h3 { font-family: var(--font-heading); margin-bottom: 16px; }
+    .modal label { display: block; font-size: 0.82rem; font-weight: 600; color: var(--gray-700); margin-bottom: 4px; }
+    .modal input, .modal select, .modal textarea { width: 100%; padding: 10px 14px; border: 1px solid var(--gray-200); border-radius: 8px; font-size: 0.9rem; margin-bottom: 12px; font-family: var(--font); }
+    .modal input:focus, .modal select:focus, .modal textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(201,168,76,0.1); }
+    .modal textarea { resize: vertical; min-height: 80px; }
+    .modal .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 14px; }
+    /* ── Detail modal fields ── */
+    .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .detail-item { background: #faf8f2; border-radius: 10px; padding: 12px 14px; border: 1px solid var(--gray-200); cursor: pointer; transition: all 0.15s; position: relative; user-select: all; }
+    .detail-item:hover { border-color: var(--accent); background: #faf6eb; }
+    .detail-item .d-label { font-size: 0.72rem; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; margin-bottom: 4px; }
+    .detail-item .d-value { font-size: 0.93rem; font-weight: 500; color: var(--primary); word-break: break-all; }
+    .detail-item .d-copy { position: absolute; top: 8px; right: 10px; font-size: 0.7rem; color: var(--text-light); opacity: 0; transition: opacity 0.2s; background: white; padding: 2px 8px; border-radius: 4px; pointer-events: none; }
+    .detail-item:hover .d-copy { opacity: 1; }
+    .detail-item.copied { border-color: var(--green); background: #e6f7f5; }
+    .detail-item.copied .d-copy { color: var(--green); opacity: 1; }
+    .pagination { display: flex; gap: 8px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
+    .pagination span { padding: 6px 12px; font-size: 0.85rem; color: var(--text-light); }
+    .export-bar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .toast { position: fixed; top: 20px; right: 20px; padding: 14px 22px; border-radius: 10px; color: white; font-weight: 600; font-size: 0.88rem; z-index: 2000; opacity: 0; transform: translateX(40px); transition: all 0.3s ease; pointer-events: none; }
+    .toast.show { opacity: 1; transform: translateX(0); }
+    .toast-success { background: var(--green); }
+    .toast-error { background: var(--red); }
+    .tr-removing { opacity: 0; transform: translateX(-20px); transition: all 0.3s ease; }
+    .tr-highlight { background: #e6f7f5 !important; transition: background 0.5s ease; }
+
+    @media (max-width: 1100px) { .stats-row { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 768px) {
+      .sidebar { width: var(--sidebar-w); left: calc(-1 * var(--sidebar-w)); transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+      .sidebar.open { left: 0; width: var(--sidebar-w); }
+      .main { padding: 20px 16px; margin-left: 0 !important; }
+      .sidebar-toggle { top: 12px; }
+      .sidebar-toggle.closed { left: 12px; }
+      .sidebar-toggle.open { left: calc(var(--sidebar-w) + 12px); }
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+      .filters { flex-direction: column; align-items: flex-start; }
+      .filters input, .filters select { width: 100%; }
+      .export-bar { flex-direction: column; align-items: flex-start; }
+      .modal .row2 { grid-template-columns: 1fr; }
+      .form-grid { grid-template-columns: 1fr; }
+      .dtable { min-width: 900px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="toast" id="toast"></div>
+  <button class="sidebar-toggle closed" id="sidebarBtn" onclick="toggleSidebar()" title="Toggle Menu">☰</button>
+
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <button class="sidebar-close" onclick="toggleSidebar()" title="Close Menu">✕</button>
+      <h3>Atlas Admin</h3>
+      <p class="sub">{{ user.email }}</p>
+      <a href="#" class="active" onclick="switchTab('leads')">Leads</a>
+      <a href="#" onclick="switchTab('add-lead')">Add Lead</a>
+      <a href="#" onclick="switchTab('deals')">Deals</a>
+      <a href="#" onclick="switchTab('payouts-tab')">Payouts</a>
+      <a href="#" onclick="switchTab('partners')">Partners</a>
+      <a href="#" onclick="switchTab('settings')">Settings</a>
+      <a href="/superadmin/blog/" style="color:var(--accent);font-weight:600;">Blog &rarr;</a>
+      <a href="/superadmin/contacts/">Contact Messages</a>
+      <a href="/partner/logout/" class="logout">Sign Out</a>
+    </aside>
+
+    <main class="main" id="mainContent">
+      <!-- ====== LEADS TAB ====== -->
+      <div class="tab-content active" id="tab-leads">
+        <h1>Lead Management</h1>
+
+        <div class="stats-row">
+          <div class="stat-card total"><div class="val" id="statTotal">{{ stats.total_leads }}</div><div class="lbl">Total</div></div>
+          <div class="stat-card pending"><div class="val" id="statPending">{{ stats.pending }}</div><div class="lbl">Pending</div></div>
+          <div class="stat-card qualified"><div class="val" id="statQualified">{{ stats.qualified }}</div><div class="lbl">Qualified</div></div>
+          <div class="stat-card nq"><div class="val" id="statNQ">{{ stats.non_qualified }}</div><div class="lbl">Non Qualified</div></div>
+          <div class="stat-card archived"><div class="val" id="statArchived">{{ stats.archived }}</div><div class="lbl">Archived</div></div>
+        </div>
+
+        <div class="panel">
+          <div class="export-bar" style="margin-bottom:16px;">
+            <h2 style="margin-bottom:0;flex:1;">All Leads</h2>
+            <button class="btn btn-gold btn-sm" onclick="openAddLead()">+ Add Lead</button>
+            <a href="/superadmin/export-csv/?status={{ filters.status }}" class="btn btn-outline btn-sm">Export CSV</a>
+            <button class="btn btn-gold btn-sm" onclick="bulkUpdate()">Bulk Update</button>
+            <button class="btn btn-red btn-sm" onclick="bulkDelete()">Bulk Delete</button>
+          </div>
+
+          <form method="get" class="filters" id="filterForm">
+            <input type="text" name="search" placeholder="Search name, email, company..." value="{{ filters.search }}" style="min-width:200px;">
+            <select name="status"><option value="">All Statuses</option><option value="pending" {% if filters.status == 'pending' %}selected{% endif %}>Pending</option><option value="qualified" {% if filters.status == 'qualified' %}selected{% endif %}>Qualified</option><option value="non_qualified" {% if filters.status == 'non_qualified' %}selected{% endif %}>Non Qualified</option><option value="archived" {% if filters.status == 'archived' %}selected{% endif %}>Archived</option></select>
+            <input type="text" name="referral" placeholder="Referral code" value="{{ filters.referral }}" style="width:130px;">
+            <input type="date" name="date_from" value="{{ filters.date_from }}" style="width:140px;">
+            <input type="date" name="date_to" value="{{ filters.date_to }}" style="width:140px;">
+            <button type="submit" class="btn btn-outline btn-sm">Filter</button>
+            <a href="/superadmin/" class="btn btn-outline btn-sm">Clear</a>
+          </form>
+
+          <div class="table-outer">
+            <table class="dtable">
+              <thead><tr><th style="width:38px;"><input type="checkbox" id="selectAll" onclick="toggleSelectAll()"></th><th>Name</th><th>Company</th><th>Email</th><th>Revenue</th><th>Credit</th><th>Time in Biz</th><th>Status</th><th>Source</th><th>Referred By</th><th>Date</th><th style="min-width:210px;">Actions</th></tr></thead>
+              <tbody id="leadsBody">
+                {% for lead in leads %}
+                <tr data-id="{{ lead.id }}" data-status="{{ lead.status }}" class="clickable" onclick="openDetail({{ lead.id }})">
+                  <td onclick="event.stopPropagation()"><input type="checkbox" class="lead-check" value="{{ lead.id }}"></td>
+                  <td><span class="cell-name" title="{{ lead.full_name }}">{{ lead.full_name }}</span></td>
+                  <td><span class="cell-cmp" title="{{ lead.company_name }}">{{ lead.company_name }}</span></td>
+                  <td><span class="cell-email" title="{{ lead.email }}">{{ lead.email }}</span></td>
+                  <td>{{ lead.monthly_revenue }}</td>
+                  <td>{{ lead.credit_score }}</td>
+                  <td>{{ lead.time_in_business }}</td>
+                  <td class="td-status"><span class="badge badge-{{ lead.status }}">{{ lead.get_status_display }}</span></td>
+                  <td><span class="badge badge-{{ lead.source }}">{{ lead.source }}</span></td>
+                  <td><span class="cell-ref" title="{{ lead.referred_by.email|default:'—' }}">{{ lead.referred_by.email|default:"—" }}</span></td>
+                  <td>{{ lead.created_at|date:"M d, H:i" }}</td>
+                  <td onclick="event.stopPropagation()">
+                    <div class="cell-actions">
+                      <select class="status-select" data-id="{{ lead.id }}" onchange="updateStatus(this)" style="width:auto;">
+                        <option value="">Change</option>
+                        <option value="pending" {% if lead.status == 'pending' %}selected{% endif %}>Pending</option>
+                        <option value="qualified" {% if lead.status == 'qualified' %}selected{% endif %}>Qualified</option>
+                        <option value="non_qualified" {% if lead.status == 'non_qualified' %}selected{% endif %}>N/Qual</option>
+                        <option value="archived" {% if lead.status == 'archived' %}selected{% endif %}>Archive</option>
+                      </select>
+                      <button class="btn btn-outline btn-sm" onclick="editLead({{ lead.id }})">Edit</button>
+                      <button class="btn btn-red btn-sm" onclick="deleteLead({{ lead.id }}, this)">Del</button>
+                    </div>
+                  </td>
+                </tr>
+                {% empty %}
+                <tr id="emptyRow"><td colspan="12" style="text-align:center;padding:40px;color:var(--text-light);">No leads found.</td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+
+          {% if leads.has_other_pages %}
+          <div class="pagination" id="pagination">
+            {% if leads.has_previous %}<a href="?page={{ leads.previous_page_number }}" class="btn btn-outline btn-sm">Previous</a>{% endif %}
+            <span>Page {{ leads.number }} of {{ leads.paginator.num_pages }} ({{ leads.paginator.count }} total)</span>
+            {% if leads.has_next %}<a href="?page={{ leads.next_page_number }}" class="btn btn-outline btn-sm">Next</a>{% endif %}
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- ====== ADD LEAD TAB ====== -->
+      <div class="tab-content" id="tab-add-lead">
+        <div class="panel" style="max-width:800px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+            <div><h1 style="margin-bottom:4px;">Add New Lead</h1><p style="color:var(--text-light);font-size:0.88rem;">Manually enter a lead. Optionally assign to a partner via referral code.</p></div>
+            <button class="btn btn-outline btn-sm" onclick="switchTab('leads')">← Back to Leads</button>
+          </div>
+          <form id="addLeadForm" onsubmit="submitNewLead(event)">
+            <div class="form-grid">
+              <div class="field-group"><label>Full Name <span style="color:var(--red);">*</span></label><input type="text" id="al_full_name" required></div>
+              <div class="field-group"><label>Email Address <span style="color:var(--red);">*</span></label><input type="email" id="al_email" required></div>
+              <div class="field-group"><label>Company Name</label><input type="text" id="al_company_name"></div>
+              <div class="field-group"><label>Phone Number <span style="color:var(--red);">*</span></label><input type="text" id="al_phone" required></div>
+              <div class="field-group"><label>Funding Amount</label><input type="text" id="al_funding_amount" placeholder="e.g. $150,000"></div>
+              <div class="field-group"><label>Monthly Revenue</label><input type="text" id="al_monthly_revenue" placeholder="e.g. $45,000"></div>
+              <div class="field-group"><label>Credit Score</label><input type="text" id="al_credit_score" placeholder="e.g. 680"></div>
+              <div class="field-group"><label>Time in Business</label><select id="al_time_in_business"><option value="0-6">0 – 6 Months</option><option value="6-12">6 – 12 Months</option><option value="1-2">1 – 2 Years</option><option value="2-5">2 – 5 Years</option><option value="5-plus">5+ Years</option></select></div>
+              <div class="field-group"><label>Assign to Partner (Referral Code)</label><input type="text" id="al_referral_code" placeholder="e.g. ABC12345"><span style="font-size:0.74rem;color:var(--text-light);">Leave blank for direct lead</span></div>
+              <div class="field-group"><label>Source</label><select id="al_source"><option value="direct">Direct</option><option value="referral">Referral</option><option value="partner_submitted">Partner Submitted</option></select></div>
+              <div class="field-group span2"><label>Notes</label><textarea id="al_notes" rows="3" placeholder="Internal notes..."></textarea></div>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-gold">Add Lead</button>
+              <button type="button" class="btn btn-outline" onclick="switchTab('leads')">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- ====== DEALS TAB ====== -->
+      <div class="tab-content" id="tab-deals">
+        <h1>Deal Submissions</h1>
+        <div class="panel">
+          <div class="table-outer">
+            <table class="dtable" style="min-width:1000px;">
+              <thead><tr><th>Partner</th><th>Name</th><th>Company</th><th>Email</th><th>Revenue</th><th>Deal Size</th><th>Model</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+              <tbody>
+                {% for deal in deals %}
+                <tr data-deal-id="{{ deal.id }}">
+                  <td><span class="cell-email">{{ deal.partner.email }}</span></td>
+                  <td>{{ deal.full_name }}</td>
+                  <td><span class="cell-cmp">{{ deal.company_name }}</span></td>
+                  <td><span class="cell-email">{{ deal.email }}</span></td>
+                  <td>{{ deal.monthly_revenue }}</td>
+                  <td>{{ deal.deal_size|default:"—" }}</td>
+                  <td>{% if deal.is_pay_per_close %}<span class="badge badge-qualified">2% PPC</span>{% else %}<span class="badge badge-pending">$100 PPL</span>{% endif %}</td>
+                  <td class="td-status"><span class="badge badge-{{ deal.status }}">{{ deal.get_status_display }}</span></td>
+                  <td>{{ deal.created_at|date:"M d" }}</td>
+                  <td>
+                    <select class="deal-status-select" data-id="{{ deal.id }}" onchange="updateDealStatus(this)" style="padding:5px 8px;border-radius:6px;font-size:0.78rem;border:1px solid var(--gray-200);font-family:var(--font);">
+                      <option value="">Change</option>
+                      <option value="submitted">Submitted</option>
+                      <option value="reviewing">Reviewing</option>
+                      <option value="approved">Approved</option>
+                      <option value="rejected">Rejected</option>
+                    </select>
+                  </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="10" style="text-align:center;padding:30px;color:var(--text-light);">No deal submissions yet.</td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ====== PAYOUTS TAB ====== -->
+      <div class="tab-content" id="tab-payouts-tab">
+        <h1>Payment Requests</h1>
+        <div class="panel">
+          <div class="table-outer">
+            <table class="dtable" style="min-width:700px;">
+              <thead><tr><th>Partner</th><th>Amount</th><th>Bank</th><th>Status</th><th>Requested</th><th>Actions</th></tr></thead>
+              <tbody>
+                {% for p in payouts %}
+                <tr>
+                  <td><span class="cell-name">{{ p.partner.get_full_name|default:p.partner.email }}</span></td>
+                  <td><strong>${{ p.amount|floatformat:2 }}</strong></td>
+                  <td>
+                    {% if p.bank_account %}
+                    <button class="btn btn-outline btn-sm" onclick="showBankDetails(event, '{{ p.bank_account.bank_name|escapejs }}', '{{ p.bank_account.account_holder_name|escapejs }}', '{{ p.bank_account.account_number|escapejs }}', '{{ p.bank_account.routing_number|escapejs }}', '{{ p.bank_account.get_account_type_display|escapejs }}')">
+                      View Bank ••••{{ p.bank_account.account_number|slice:"-4:" }}
+                    </button>
+                    {% else %}
+                    <span style="color:var(--red);font-size:0.82rem;">No bank on file</span>
+                    {% endif %}
+                  </td>
+                  <td><span class="badge badge-{{ p.status }}">{{ p.get_status_display }}</span></td>
+                  <td>{{ p.created_at|date:"M d" }}</td>
+                  <td>
+                    {% if p.status == 'pending' %}
+                    <button class="btn btn-gold btn-sm" onclick="processPayout({{ p.id }})">Mark Paid</button>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6" style="text-align:center;padding:30px;color:var(--text-light);">No pending payout requests.</td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ====== PARTNERS TAB ====== -->
+      <div class="tab-content" id="tab-partners">
+        <h1>Partner Overview</h1>
+        <div class="panel">
+          <div class="table-outer">
+            <table class="dtable" style="min-width:1100px;">
+              <thead><tr><th>Partner</th><th>Role</th><th>Company</th><th>Referral Code</th><th>PPL Rate</th><th>Leads</th><th>Qualified</th><th>Earned</th><th>Balance</th><th>Actions</th></tr></thead>
+              <tbody>
+                {% for p in partners %}
+                <tr>
+                  <td class="cell-name">{{ p.get_full_name|default:p.email }}</td>
+                  <td><span class="badge {% if p.role == 'superadmin' %}badge-archived{% else %}badge-qualified{% endif %}">{{ p.role }}</span></td>
+                  <td>{{ p.company_name }}</td>
+                  <td><code style="background:#f5f1e7;padding:2px 6px;border-radius:4px;font-size:0.8rem;">{{ p.referral_code }}</code></td>
+                  <td>
+                    <div style="display:flex;align-items:center;gap:4px;">
+                      <span>$</span>
+                      <input type="number" value="{{ p.ppl_rate|floatformat:'0' }}" data-pid="{{ p.id }}" class="ppl-input" style="width:70px;padding:5px 8px;border:1px solid var(--gray-200);border-radius:6px;font-size:0.8rem;text-align:center;" onchange="updatePPL(this)">
+                    </div>
+                  </td>
+                  <td>{{ p.lead_count }}</td>
+                  <td>{{ p.qualified_count }}</td>
+                  <td>${{ p.total_earned|default:0|floatformat:2 }}</td>
+                  <td><strong style="color:var(--accent);">${{ p.wallet_balance|default:0|floatformat:2 }}</strong></td>
+                  <td>
+                    <button class="btn btn-gold btn-sm" onclick="payPartner({{ p.id }}, {{ p.wallet_balance|default:0|floatformat:'0'|slice:':-3' }})" {% if p.wallet_balance|default:0 == 0 %}disabled style="opacity:0.4;cursor:not-allowed;"{% endif %}>Pay Now</button>
+                  </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="10" style="text-align:center;padding:24px;color:var(--text-light);">No partners yet.</td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ====== SETTINGS TAB ====== -->
+      <div class="tab-content" id="tab-settings">
+        <h1>Settings</h1>
+        <div class="panel" style="max-width:600px;">
+          <h2>Platform Configuration</h2>
+          <div class="field-group">
+            <label for="setPPL">Default Pay Per Lead ($)</label>
+            <input type="number" id="setPPL" value="{{ app_settings.default_ppl_rate|floatformat:0 }}" step="1" min="1">
+            <span style="font-size:0.76rem;color:var(--text-light);">New partners start at this rate. Change individually on the Partners tab.</span>
+          </div>
+          <div class="field-group">
+            <label for="setMinPayout">Minimum Payout Amount ($)</label>
+            <input type="number" id="setMinPayout" value="{{ app_settings.min_payout|floatformat:0 }}" step="1" min="10">
+            <span style="font-size:0.76rem;color:var(--text-light);">Partners cannot request payout below this balance.</span>
+          </div>
+          <button class="btn btn-gold" onclick="saveSettings()">Save Settings</button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ===== EDIT LEAD MODAL ===== -->
+  <div class="modal-overlay" id="editModal">
+    <div class="modal">
+      <h3>Edit Lead #<span id="editModalId"></span></h3>
+      <form id="editForm">
+        <input type="hidden" id="editId" name="lead_id">
+        <div class="row2">
+          <div><label>Full Name</label><input type="text" id="editFullName" name="full_name"></div>
+          <div><label>Email</label><input type="email" id="editEmail" name="email"></div>
+          <div><label>Company</label><input type="text" id="editCompany" name="company_name"></div>
+          <div><label>Phone</label><input type="text" id="editPhone" name="phone"></div>
+          <div><label>Funding Amount</label><input type="text" id="editAmount" name="funding_amount"></div>
+          <div><label>Monthly Revenue</label><input type="text" id="editRevenue" name="monthly_revenue"></div>
+          <div><label>Credit Score</label><input type="text" id="editCredit" name="credit_score"></div>
+          <div><label>Time in Business</label><input type="text" id="editTime" name="time_in_business"></div>
+        </div>
+        <label>Notes</label><textarea id="editNotes" name="notes"></textarea>
+        <div style="display:flex;gap:12px;margin-top:14px;">
+          <button type="submit" class="btn btn-gold">Save Changes</button>
+          <button type="button" class="btn btn-outline" onclick="closeEdit()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== LEAD DETAIL MODAL ===== -->
+  <div class="modal-overlay" id="detailModal">
+    <div class="modal" style="max-width:680px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
+        <h3 style="margin:0;">Lead #<span id="detailId"></span></h3>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-outline btn-sm" onclick="detailEdit()">Edit</button>
+          <button class="btn btn-outline btn-sm" onclick="closeDetail()">✕</button>
+        </div>
+      </div>
+      <div class="detail-grid" id="detailGrid"></div>
+      <p style="font-size:0.72rem;color:var(--text-light);margin-top:12px;">Click any field to copy its value to clipboard.</p>
+    </div>
+  </div>
+
+  <!-- ===== BANK DETAIL MODAL ===== -->
+  <div class="modal-overlay" id="bankModal">
+    <div class="modal" style="max-width:480px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
+        <h3 style="margin:0;">Bank Account Details</h3>
+        <button class="btn btn-outline btn-sm" onclick="closeBank()">✕</button>
+      </div>
+      <div class="detail-grid" id="bankGrid"></div>
+    </div>
+  </div>
+
+  <script>
+    var csrf = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+
+    var LEADS = {};
+    {% for lead in leads %}
+    LEADS[{{ lead.id }}] = {
+      id: {{ lead.id }},
+      full_name: "{{ lead.full_name|escapejs }}",
+      email: "{{ lead.email|escapejs }}",
+      company_name: "{{ lead.company_name|escapejs }}",
+      phone: "{{ lead.phone|escapejs }}",
+      funding_amount: "{{ lead.funding_amount|escapejs }}",
+      monthly_revenue: "{{ lead.monthly_revenue|escapejs }}",
+      credit_score: "{{ lead.credit_score|escapejs }}",
+      time_in_business: "{{ lead.time_in_business|escapejs }}",
+      notes: "{{ lead.notes|escapejs }}",
+      status: "{{ lead.status }}",
+      status_display: "{{ lead.get_status_display }}",
+      source: "{{ lead.source }}",
+      referred_email: "{{ lead.referred_by.email|default:'' }}",
+      created_at: "{{ lead.created_at|date:'M d, H:i' }}"
+    };
+    {% endfor %}
+
+    var STATS = {
+      total: {{ stats.total_leads }},
+      pending: {{ stats.pending }},
+      qualified: {{ stats.qualified }},
+      non_qualified: {{ stats.non_qualified }},
+      archived: {{ stats.archived }}
+    };
+
+    function showToast(msg, type) {
+      var t = document.getElementById('toast');
+      t.textContent = msg; t.className = 'toast toast-' + type + ' show';
+      setTimeout(function() { t.className = 'toast toast-' + type; }, 2500);
+    }
+
+    function toggleSidebar() {
+      var sb = document.getElementById('sidebar');
+      var btn = document.getElementById('sidebarBtn');
+      var main = document.getElementById('mainContent');
+      var isOpen = sb.classList.contains('open');
+      if (isOpen) {
+        sb.classList.remove('open');
+        btn.classList.remove('open');
+        btn.classList.add('closed');
+        btn.textContent = '☰';
+        if (main) main.classList.remove('shifted');
+        localStorage.setItem('atlas_sidebar_open', '0');
+      } else {
+        sb.classList.add('open');
+        btn.classList.remove('closed');
+        btn.classList.add('open');
+        btn.textContent = '✕';
+        if (main) main.classList.add('shifted');
+        localStorage.setItem('atlas_sidebar_open', '1');
+      }
+    }
+
+    // Restore sidebar state
+    (function() {
+      if (localStorage.getItem('atlas_sidebar_open') === '1') {
+        setTimeout(function() { toggleSidebar(); }, 50);
+      }
+    })();
+
+    function switchTab(name) {
+      document.querySelectorAll('.tab-content').forEach(function(el) { el.classList.remove('active'); });
+      var tab = document.getElementById('tab-' + name);
+      if (tab) tab.classList.add('active');
+      document.querySelectorAll('.sidebar a').forEach(function(a) { a.classList.remove('active'); });
+      var links = document.querySelectorAll('.sidebar a');
+      for (var i = 0; i < links.length; i++) {
+        if (links[i].textContent.toLowerCase().indexOf(name) > -1 || (name === 'leads' && i === 0)) {
+          links[i].classList.add('active'); break;
+        }
+      }
+    }
+
+    function badgeHtml(status) {
+      var labels = { pending: 'Pending', qualified: 'Qualified', non_qualified: 'Non Qualified', archived: 'Archived' };
+      return '<span class="badge badge-' + status + '">' + (labels[status] || status) + '</span>';
+    }
+
+    // ── UPDATE STATS COUNTERS ──
+    function decrStat(status) { if (STATS[status] > 0) STATS[status]--; STATS.total--; updateStatDisplays(); }
+    function updateStatDisplays() {
+      document.getElementById('statTotal').textContent = STATS.total;
+      document.getElementById('statPending').textContent = STATS.pending;
+      document.getElementById('statQualified').textContent = STATS.qualified;
+      document.getElementById('statNQ').textContent = STATS.non_qualified;
+      document.getElementById('statArchived').textContent = STATS.archived;
+    }
+
+    // ── UPDATE STATUS (instant DOM) ──
+    function updateStatus(sel) {
+      var id = sel.getAttribute('data-id');
+      var newStatus = sel.value;
+      if (!id || !newStatus) return;
+      var fd = new FormData(); fd.append('status', newStatus);
+      fetch('/superadmin/lead/' + id + '/update/', { method: 'POST', body: fd, headers: { 'X-CSRFToken': csrf } })
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          if (d.success) {
+            var row = document.querySelector('tr[data-id="' + id + '"]');
+            if (row) {
+              var oldStatus = row.getAttribute('data-status');
+              row.setAttribute('data-status', newStatus);
+              row.querySelector('.td-status').innerHTML = badgeHtml(newStatus);
+              row.classList.add('tr-highlight');
+              setTimeout(function() { row.classList.remove('tr-highlight'); }, 800);
+              if (oldStatus) { STATS[oldStatus]--; STATS.total--; }
+              STATS[newStatus] = (STATS[newStatus] || 0) + 1; STATS.total++;
+              updateStatDisplays();
+            }
+            showToast('Lead #' + id + ' → ' + newStatus.replace('_',' '), 'success');
+            sel.value = '';
+          } else { showToast('Update failed', 'error'); }
+        }).catch(function() { showToast('Request failed', 'error'); });
+    }
+
+    // ── EDIT (instant DOM) ──
+    function editLead(id) {
+      var data = LEADS[id];
+      if (!data) { showToast('Reload page to edit this lead', 'error'); return; }
+      document.getElementById('editId').value = id;
+      document.getElementById('editModalId').textContent = id;
+      document.getElementById('editFullName').value = data.full_name;
+      document.getElementById('editEmail').value = data.email;
+      document.getElementById('editCompany').value = data.company_name;
+      document.getElementById('editPhone').value = data.phone;
+      document.getElementById('editAmount').value = data.funding_amount;
+      document.getElementById('editRevenue').value = data.monthly_revenue;
+      document.getElementById('editCredit').value = data.credit_score;
+      document.getElementById('editTime').value = data.time_in_business;
+      document.getElementById('editNotes').value = data.notes;
+      document.getElementById('editModal').classList.add('active');
+    }
+    function closeEdit() { document.getElementById('editModal').classList.remove('active'); }
+    var currentDetailId = null;
+
+    function openDetail(id) {
+      currentDetailId = id;
+      var data = LEADS[id];
+      if (!data) { showToast('Lead not on current page', 'error'); return; }
+      document.getElementById('detailId').textContent = id;
+      var fields = [
+        { label: 'Full Name', value: data.full_name },
+        { label: 'Email', value: data.email },
+        { label: 'Company', value: data.company_name },
+        { label: 'Phone', value: data.phone },
+        { label: 'Funding Amount', value: data.funding_amount },
+        { label: 'Monthly Revenue', value: data.monthly_revenue },
+        { label: 'Credit Score', value: data.credit_score },
+        { label: 'Time in Business', value: data.time_in_business },
+        { label: 'Status', value: data.status_display },
+        { label: 'Source', value: data.source },
+        { label: 'Referred By', value: data.referred_email || '—' },
+        { label: 'Notes', value: data.notes || '—' },
+        { label: 'Created', value: data.created_at },
+      ];
+      var html = '';
+      fields.forEach(function(f, i) {
+        html += '<div class="detail-item" onclick="copyDetail(event, ' + i + ')" title="Click to copy"><div class="d-label">' + f.label + '</div><div class="d-value">' + f.value + '</div><span class="d-copy">Copy</span></div>';
+      });
+      var grid = document.getElementById('detailGrid');
+      grid.innerHTML = html;
+      fields.forEach(function(f, i) {
+        grid.__fields = fields;
+      });
+      document.getElementById('detailModal').classList.add('active');
+    }
+
+    function closeDetail() { document.getElementById('detailModal').classList.remove('active'); currentDetailId = null; }
+
+    function copyDetail(e, idx) {
+      var fields = document.getElementById('detailGrid').__fields;
+      if (!fields) return;
+      var val = fields[idx].value;
+      navigator.clipboard.writeText(val).then(function() {
+        var items = document.querySelectorAll('#detailGrid .detail-item');
+        if (items[idx]) {
+          items[idx].classList.add('copied');
+          items[idx].querySelector('.d-copy').textContent = 'Copied!';
+          setTimeout(function() {
+            items[idx].classList.remove('copied');
+            items[idx].querySelector('.d-copy').textContent = 'Copy';
+          }, 1500);
+        }
+        showToast('Copied: ' + fields[idx].label, 'success');
+      }).catch(function() { showToast('Copy failed', 'error'); });
+    }
+
+    function detailEdit() {
+      if (currentDetailId) {
+        closeDetail();
+        setTimeout(function() { editLead(currentDetailId); }, 200);
+      }
+    }
+
+    document.getElementById('editForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      var id = document.getElementById('editId').value;
+      var fd = new FormData(document.getElementById('editForm'));
+      fetch('/superadmin/lead/' + id + '/edit/', { method: 'POST', body: fd, headers: { 'X-CSRFToken': csrf } })
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          if (d.success) {
+            var row = document.querySelector('tr[data-id="' + id + '"]');
+            var nn = fd.get('full_name'), em = fd.get('email'), cn = fd.get('company_name'),
+                ph = fd.get('phone'), fa = fd.get('funding_amount'), mr = fd.get('monthly_revenue'),
+                cs = fd.get('credit_score'), tb = fd.get('time_in_business'), nt = fd.get('notes');
+            if (row) {
+              row.querySelector('.cell-name').textContent = nn;
+              row.querySelector('.cell-name').title = nn;
+              row.querySelector('.cell-email').textContent = em;
+              row.querySelector('.cell-email').title = em;
+              row.querySelector('.cell-cmp').textContent = cn;
+              row.querySelector('.cell-cmp').title = cn;
+              row.cells[4].textContent = mr;
+              row.cells[5].textContent = cs;
+              row.cells[6].textContent = tb;
+            }
+            LEADS[id].full_name = nn; LEADS[id].email = em; LEADS[id].company_name = cn;
+            LEADS[id].phone = ph; LEADS[id].funding_amount = fa; LEADS[id].monthly_revenue = mr;
+            LEADS[id].credit_score = cs; LEADS[id].time_in_business = tb; LEADS[id].notes = nt;
+            showToast('Lead updated', 'success'); closeEdit();
+          } else { showToast('Update failed', 'error'); }
+        }).catch(function() { showToast('Request failed', 'error'); });
+    });
+
+    // ── DELETE (instant DOM) ──
+    function deleteLead(id, btn) {
+      if (!confirm('Delete lead #' + id + '? This cannot be undone.')) return;
+      fetch('/superadmin/lead/' + id + '/delete/', { method: 'POST', headers: { 'X-CSRFToken': csrf } })
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          if (d.success) {
+            var row = document.querySelector('tr[data-id="' + id + '"]');
+            if (row) {
+              var oldStatus = row.getAttribute('data-status');
+              row.classList.add('tr-removing');
+              setTimeout(function() { row.remove(); checkEmpty(); }, 300);
+              if (oldStatus) { STATS[oldStatus]--; STATS.total--; updateStatDisplays(); }
+            }
+            delete LEADS[id];
+            showToast('Lead deleted', 'success');
+          } else { showToast('Delete failed', 'error'); }
+        }).catch(function() { showToast('Request failed', 'error'); });
+    }
+
+    function checkEmpty() {
+      var tbody = document.getElementById('leadsBody');
+      var rows = tbody.querySelectorAll('tr:not(#emptyRow)');
+      if (rows.length === 0) {
+        tbody.innerHTML = '<tr id="emptyRow"><td colspan="12" style="text-align:center;padding:40px;color:var(--text-light);">No leads found.</td></tr>';
+      }
+    }
+
+    // ── ADD LEAD ──
+    function openAddLead() { switchTab('add-lead'); }
+    function submitNewLead(e) {
+      e.preventDefault();
+      var fd = new FormData();
+      fd.append('full_name', document.getElementById('al_full_name').value);
+      fd.append('email', document.getElementById('al_email').value);
+      fd.append('company_name', document.getElementById('al_company_name').value);
+      fd.append('phone', document.getElementById('al_phone').value);
+      fd.append('funding_amount', document.getElementById('al_funding_amount').value);
+      fd.append('monthly_revenue', document.getElementById('al_monthly_revenue').value);
+      fd.append('credit_score', document.getElementById('al_credit_score').value);
+      fd.append('time_in_business', document.getElementById('al_time_in_business').value);
+      fd.append('referral_code', document.getElementById('al_referral_code').value);
+      fd.append('source', document.getElementById('al_source').value);
+      fd.append('notes', document.getElementById('al_notes').value);
+      fd.append('consent', 'on');
+      fetch('/superadmin/add-lead/', { method: 'POST', body: fd, headers: { 'X-CSRFToken': csrf } })
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          if (d.success) {
+            showToast('Lead added', 'success');
+            document.getElementById('addLeadForm').reset();
+            STATS.pending++; STATS.total++; updateStatDisplays();
+            switchTab('leads');
+          } else { showToast(d.error || 'Failed', 'error'); }
+        }).catch(function() { showToast('Request failed', 'error'); });
+    }
+
+    // ── DEAL STATUS (instant DOM) ──
+    function updateDealStatus(sel) {
+      var id = sel.getAttribute('data-id');
+      var status = sel.value;
+      if (!id || !status) return;
+      var fd = new FormData(); fd.append('status', status);
+      fetch('/superadmin/deal/' + id + '/update-status/', { method: 'POST', body: fd, headers: { 'X-CSRFToken': csrf } })
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          if (d.success) {
+            var row = document.querySelector('tr[data-deal-id="' + id + '"]');
+            if (row) {
+              var labels = { submitted: 'Submitted', reviewing: 'Reviewing', approved: 'Approved', rejected: 'Rejected' };
+              row.querySelector('.td-status').innerHTML = '<span class="badge badge-' + status + '">' + (labels[status] || status) + '</span>';
+            }
+            showToast('Deal → ' + status, 'success'); sel.value = '';
+          } else { showToast('Update failed', 'error'); }
+        }).catch(function() { showToast('Request failed', 'error'); });
+    }
+
+    // ── BULK ──
+    function toggleSelectAll() {
+      var checked = document.getElementById('selectAll').checked;
+      document.querySelectorAll('.lead-check').forEach(function(cb) { cb.checked = checked; });
+    }
+    function getSelectedIds() {
+      var ids = [];
+      document.querySelectorAll('.lead-check:checked').forEach(function(cb) { ids.push(cb.value); });
+      return ids;
+    }
+    function bulkUpdate() {
+      var ids = getSelectedIds();
+      if (!ids.length) { showToast('Select leads first', 'error'); return; }
+      var status = prompt('Enter status: pending, qualified, non_qualified, archived');
+      if (!status) return;
+      var fd = new FormData();
+      ids.forEach(function(id) { fd.append('lead_ids', id); });
+      fd.append('action', status);
+      fetch('/superadmin/bulk-action/', { method: 'POST', body: fd, headers: { 'X-CSRFToken': csrf } })
+        .then(function(r) { return r.json(); })
+        .then(function(d) { if (d.success) { showToast(ids.length + ' leads → ' + status, 'success'); location.reload(); } })
+        .catch(function() { showToast('Bulk update failed', 'error'); });
+    }
+    function bulkDelete() {
+      var ids = getSelectedIds();
+      if (!ids.length) { showToast('Select leads first', 'error'); return; }
+      if (!confirm('Permanently delete ' + ids.length + ' lead(s)?')) return;
+      var fd = new FormData();
+      ids.forEach(function(id) { fd.append('lead_ids', id); });
+      fd.append('action', 'delete');
+      fetch('/superadmin/bulk-action/', { method: 'POST', body: fd, headers: { 'X-CSRFToken': csrf } })
+        .then(function(r) { return r.json(); })
+        .then(function(d) { if (d.success) { showToast(ids.length + ' leads deleted', 'success'); location.reload(); } })
+        .catch(function() { showToast('Bulk delete failed', 'error'); });
+    }
+
+    function processPayout(id) {
+      if (!confirm('Mark this payout as paid?')) return;
+      fetch('/superadmin/payout/' + id + '/process/', { method: 'POST', headers: { 'X-CSRFToken': csrf } })
+        .then(function(r) { return r.json(); })
+        .then(function(d) { if (d.success) { showToast('Payout marked as paid', 'success'); location.reload(); } })
+        .catch(function() { showToast('Failed', 'error'); });
+    }
+
+    function payPartner(pid, balance) {
+      if (!confirm('Pay all $' + balance + ' to this partner?')) return;
+      fetch('/superadmin/partner/' + pid + '/pay/', { method: 'POST', headers: { 'X-CSRFToken': csrf } })
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          if (d.success) { showToast('$' + d.payout + ' paid to partner', 'success'); location.reload(); }
+        })
+        .catch(function() { showToast('Failed', 'error'); });
+    }
+
+    function updatePPL(input) {
+      var pid = input.getAttribute('data-pid');
+      var rate = input.value;
+      if (!rate || rate <= 0) { showToast('Enter a valid rate', 'error'); return; }
+      var fd = new FormData();
+      fd.append('ppl_rate', rate);
+      fetch('/superadmin/partner/' + pid + '/ppl/', { method: 'POST', body: fd, headers: { 'X-CSRFToken': csrf } })
+        .then(function(r) { return r.json(); })
+        .then(function(d) { if (d.success) { showToast('PPL rate updated to $' + d.ppl_rate, 'success'); } })
+        .catch(function() { showToast('Failed', 'error'); });
+    }
+
+    function saveSettings() {
+      var fd = new FormData();
+      fd.append('default_ppl_rate', document.getElementById('setPPL').value);
+      fd.append('min_payout_amount', document.getElementById('setMinPayout').value);
+      fetch('/superadmin/settings/', { method: 'POST', body: fd, headers: { 'X-CSRFToken': csrf } })
+        .then(function(r) { return r.json(); })
+        .then(function(d) { if (d.success) { showToast('Settings saved', 'success'); } })
+        .catch(function() { showToast('Save failed', 'error'); });
+    }
+
+    function showBankDetails(e, bankName, holderName, acctNum, routingNum, acctType) {
+      e.stopPropagation();
+      var fields = [
+        { label: 'Bank Name', value: bankName },
+        { label: 'Account Holder', value: holderName },
+        { label: 'Account Number', value: acctNum },
+        { label: 'Routing Number', value: routingNum },
+        { label: 'Account Type', value: acctType },
+      ];
+      var html = '';
+      fields.forEach(function(f, i) {
+        html += '<div class="detail-item" onclick="copyDetailEl(event, \'' + f.value.replace(/'/g, "\\'") + '\')" title="Click to copy"><div class="d-label">' + f.label + '</div><div class="d-value">' + f.value + '</div><span class="d-copy">Copy</span></div>';
+      });
+      document.getElementById('bankGrid').innerHTML = html;
+      document.getElementById('bankModal').classList.add('active');
+    }
+
+    function closeBank() { document.getElementById('bankModal').classList.remove('active'); }
+
+    function copyDetailEl(e, val) {
+      navigator.clipboard.writeText(val).then(function() {
+        var el = e.currentTarget;
+        el.classList.add('copied');
+        el.querySelector('.d-copy').textContent = 'Copied!';
+        setTimeout(function() { el.classList.remove('copied'); el.querySelector('.d-copy').textContent = 'Copy'; }, 1500);
+        showToast('Copied to clipboard', 'success');
+      }).catch(function() { showToast('Copy failed', 'error'); });
+    }
+  </script>
+</body>
+</html>

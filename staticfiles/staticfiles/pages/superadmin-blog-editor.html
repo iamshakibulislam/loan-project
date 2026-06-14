@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ post.title|default:'New Post' }} — Blog Editor | Atlas Fund Capital</title>
+  {% csrf_token %}
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap" rel="stylesheet">
+  <style>
+    :root { --primary: #0a0e27; --accent: #c9a84c; --white: #fff; --cream: #faf8f2; --gray-100: #f1f5f9; --gray-200: #e2e8f0; --gray-600: #475569; --gray-700: #334155; --text: #0f0f1a; --text-light: #6b7280; --green: #0d9488; --red: #dc2626; --blue: #2563eb; --font: 'Inter', sans-serif; --font-heading: 'Cormorant Garamond', serif; --font-mono: 'JetBrains Mono', monospace; --sidebar-w: 260px; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font); background: #eef1f5; color: var(--text); overflow-x: hidden; }
+    .app { display: flex; min-height: 100vh; }
+    .sidebar { width: 0; height: 100vh; background: var(--primary); color: white; position: fixed; top: 0; left: 0; bottom: 0; overflow-x: hidden; overflow-y: auto; z-index: 150; transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; }
+    .sidebar.open { width: var(--sidebar-w); padding: 24px 20px; }
+    .sidebar h3 { font-family: var(--font-heading); font-size: 1.3rem; margin-bottom: 6px; margin-top: 0; color: var(--accent); white-space: nowrap; }
+    .sidebar .sub { font-size: 0.76rem; color: rgba(255,255,255,0.35); margin-bottom: 24px; white-space: nowrap; }
+    .sidebar a { display: block; color: rgba(255,255,255,0.55); padding: 10px 14px; border-radius: 10px; margin-bottom: 4px; text-decoration: none; font-size: 0.88rem; font-weight: 500; transition: all 0.2s; cursor: pointer; white-space: nowrap; }
+    .sidebar a:hover, .sidebar a.active { background: rgba(255,255,255,0.08); color: white; }
+    .sidebar .logout { margin-top: auto; color: rgba(255,255,255,0.35); }
+    .sidebar .sidebar-close { position: absolute; top: 12px; right: 14px; background: rgba(255,255,255,0.1); border: none; color: rgba(255,255,255,0.6); width: 30px; height: 30px; border-radius: 8px; cursor: pointer; font-size: 1.1rem; display: none; align-items: center; justify-content: center; }
+    .sidebar.open .sidebar-close { display: flex; }
+    .sidebar-toggle { position: fixed; top: 18px; z-index: 200; width: 42px; height: 42px; background: var(--primary); color: white; border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 10px rgba(0,0,0,0.25); transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    .sidebar-toggle.closed { left: 16px; }
+    .sidebar-toggle.open { left: 276px; }
+    .sidebar-toggle:hover { background: #1a1e3a; }
+    .main { flex: 1; padding: 28px 32px 28px 52px; min-width: 0; margin-left: 0; transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    .main.shifted { margin-left: calc(var(--sidebar-w) - 52px); }
+
+    .editor-topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
+    .editor-topbar h1 { font-family: var(--font-heading); font-size: 1.4rem; font-weight: 700; }
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 18px; border-radius: 8px; font-size: 0.84rem; font-weight: 600; cursor: pointer; transition: all 0.2s; text-decoration: none; border: none; font-family: var(--font); white-space: nowrap; }
+    .btn-gold { background: var(--accent); color: var(--primary); }
+    .btn-gold:hover { background: #b08a30; }
+    .btn-green { background: #059669; color: white; }
+    .btn-green:hover { background: #047857; }
+    .btn-outline { background: white; border: 1px solid var(--gray-200); color: var(--text); }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-sm { padding: 5px 10px; font-size: 0.74rem; border-radius: 6px; }
+    .btn-group { display: flex; gap: 8px; }
+
+    .meta-panel { background: white; border-radius: 14px; padding: 22px 24px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 12px; }
+    .form-row.full { grid-template-columns: 1fr; }
+    .form-row:last-child { margin-bottom: 0; }
+    .form-group label { display: block; font-size: 0.75rem; font-weight: 700; color: var(--gray-700); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.6px; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px 14px; border: 1px solid var(--gray-200); border-radius: 8px; font-size: 0.9rem; font-family: var(--font); transition: all 0.2s; background: white; color: var(--text); }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(201,168,76,0.12); }
+    .form-group textarea { resize: vertical; min-height: 55px; }
+
+    .editor-panel { background: white; border-radius: 14px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+
+    .editor-toolbar { display: flex; gap: 3px; padding: 10px 14px; border-bottom: 1px solid var(--gray-200); flex-wrap: wrap; background: #faf9f5; position: sticky; top: 0; z-index: 10; align-items: center; }
+    .tbtn { width: 32px; height: 32px; padding: 0; display: inline-flex; align-items: center; justify-content: center; border-radius: 6px; border: 1px solid transparent; background: transparent; cursor: pointer; font-size: 0.82rem; font-family: var(--font); color: var(--gray-700); transition: all 0.12s; font-weight: 600; }
+    .tbtn:hover { background: rgba(201,168,76,0.1); border-color: rgba(201,168,76,0.25); color: var(--accent); }
+    .tbtn.active { background: var(--accent); color: white; border-color: var(--accent); }
+    .tsep { width: 1px; height: 20px; background: var(--gray-200); margin: 0 5px; align-self: center; }
+    .tcolor { width: 28px; height: 28px; border-radius: 6px; border: 2px solid var(--gray-200); cursor: pointer; padding: 0; transition: border-color 0.15s; }
+    .tcolor:hover { border-color: var(--accent); }
+    .tfontsize { padding: 4px 8px; border-radius: 6px; border: 1px solid var(--gray-200); font-size: 0.8rem; font-family: var(--font); cursor: pointer; color: var(--gray-700); background: white; }
+
+    .editor-area { padding: 40px 48px; min-height: 600px; font-size: 1.38rem; line-height: 1.95; font-family: 'Lora', Georgia, serif; color: #000; outline: none; font-weight: 400; }
+    .editor-area:empty:before { content: 'Start writing your story...'; color: #cbd5e1; pointer-events: none; font-family: var(--font); }
+    .editor-area h1 { font-size: 2.5rem; line-height: 1.2; font-weight: 700; margin: 28px 0 14px; color: #000; font-family: 'Lora', Georgia, serif; }
+    .editor-area h2 { font-size: 1.8rem; line-height: 1.25; font-weight: 700; margin: 24px 0 12px; color: #000; border-bottom: 2px solid #e8e8e8; padding-bottom: 8px; font-family: 'Lora', Georgia, serif; }
+    .editor-area h3 { font-size: 1.42rem; line-height: 1.3; margin: 20px 0 10px; color: #000; font-family: 'Lora', Georgia, serif; }
+    .editor-area p { margin: 0 0 20px; }
+    .editor-area ul, .editor-area ol { margin: 8px 0 20px 28px; }
+    .editor-area li { margin-bottom: 8px; }
+    .editor-area blockquote { border-left: 4px solid var(--accent); margin: 20px 0; padding: 14px 24px; color: #000; font-style: italic; background: #faf8f2; border-radius: 0 8px 8px 0; font-size: 1.22rem; }
+    .editor-area pre { background: #111827; color: #e5e7eb; padding: 24px 28px; border-radius: 10px; overflow-x: auto; font-family: var(--font-mono); font-size: 0.92rem; line-height: 1.7; margin: 20px 0; }
+    .editor-area :where(code) { font-family: var(--font-mono); background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+    .editor-area pre code { background: none; padding: 0; border-radius: 0; }
+    .editor-area img { max-width: 100%; height: auto; border-radius: 10px; margin: 24px 0; display: block; cursor: pointer; }
+    .editor-area a { color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(201,168,76,0.35); }
+
+    .editor-footer-tools { padding: 12px 48px 16px; border-top: 1px solid var(--gray-200); display: flex; gap: 12px; align-items: center; flex-wrap: wrap; background: #faf9f5; }
+    .editor-footer-tools label { font-size: 0.8rem; color: var(--gray-600); font-weight: 500; }
+
+    .publish-bar { display: flex; align-items: center; gap: 14px; margin-top: 16px; padding: 14px 22px; background: white; border-radius: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+    .publish-bar label { font-size: 0.86rem; font-weight: 600; display: flex; align-items: center; gap: 7px; cursor: pointer; color: var(--text); }
+    .publish-bar input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: var(--accent); }
+    .publish-bar .pub-hint { font-size: 0.8rem; color: var(--text-light); }
+    .publish-bar .pub-hint strong { color: var(--accent); }
+    .spacer { flex: 1; }
+
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 5000; align-items: center; justify-content: center; }
+    .modal-overlay.active { display: flex; }
+    .modal { background: white; border-radius: 16px; padding: 28px 32px; width: 460px; max-width: 92%; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+    .modal h3 { font-family: var(--font-heading); font-size: 1.2rem; margin-bottom: 18px; }
+    .modal input, .modal select { width: 100%; padding: 10px 14px; border: 1px solid var(--gray-200); border-radius: 8px; font-size: 0.9rem; font-family: var(--font); margin-bottom: 12px; }
+    .modal input:focus, .modal select:focus { outline: none; border-color: var(--accent); }
+    .modal .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 4px; }
+
+    .toast { position: fixed; top: 20px; right: 20px; padding: 12px 24px; border-radius: 10px; font-size: 0.88rem; font-weight: 600; z-index: 9999; opacity: 0; transform: translateY(-12px); transition: all 0.3s; pointer-events: none; font-family: var(--font); }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .toast.success { background: #059669; color: white; }
+    .toast.error { background: #dc2626; color: white; }
+
+    @media (max-width: 768px) {
+      .sidebar { width: var(--sidebar-w); left: calc(-1 * var(--sidebar-w)); transition: left 0.3s; }
+      .sidebar.open { left: 0; width: var(--sidebar-w); }
+      .main { padding: 16px; margin-left: 0 !important; }
+      .sidebar-toggle { top: 12px; }
+      .sidebar-toggle.closed { left: 12px; }
+      .sidebar-toggle.open { left: calc(var(--sidebar-w) + 12px); }
+      .form-row { grid-template-columns: 1fr; }
+      .editor-area { padding: 24px 20px; font-size: 1.18rem; }
+      .editor-toolbar { padding: 8px; gap: 1px; }
+      .tbtn { width: 28px; height: 28px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <button class="sidebar-close" id="sidebarClose">&times;</button>
+      <h3>Atlas</h3>
+      <div class="sub">Fund Capital Admin</div>
+      <a href="/superadmin/">Dashboard</a>
+      <a href="/superadmin/blog/" class="active">Blog</a>
+      <a href="/superadmin/contacts/">Contact Messages</a>
+      <a href="/partner/logout/" class="logout">Sign Out</a>
+    </aside>
+    <button class="sidebar-toggle closed" id="sidebarToggle">&#9776;</button>
+    <main class="main" id="mainContent">
+      <form id="postForm" enctype="multipart/form-data">
+        <input type="hidden" name="post_id" value="{{ post.id|default:'' }}">
+        <input type="hidden" name="is_published" id="isPublishedInput" value="{% if post and post.is_published %}on{% endif %}">
+
+        <div class="editor-topbar">
+          <div>
+            <h1>{% if post %}Edit Post{% else %}Create New Post{% endif %}</h1>
+            <a href="/superadmin/blog/" style="font-size:0.8rem;color:var(--text-light);text-decoration:none;">&larr; Back to all posts</a>
+          </div>
+          <div class="btn-group">
+            <button type="button" class="btn btn-outline" onclick="previewPost()">Preview</button>
+            <button type="button" class="btn btn-gold" onclick="savePost(false)">Save Draft</button>
+            <button type="button" class="btn btn-green" onclick="savePost(true)" id="publishBtn">Publish</button>
+          </div>
+        </div>
+
+        <div class="meta-panel">
+          <div class="form-row">
+            <div class="form-group" style="grid-column:1/-1;">
+              <label>Title</label>
+              <input type="text" name="title" id="titleInput" value="{{ post.title|default:'' }}" placeholder="Enter your headline..." required style="font-size:1.1rem;font-weight:600;">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group" style="grid-column:1/-1;">
+              <label>Subtitle</label>
+              <input type="text" name="subtitle" id="subtitleInput" value="{{ post.subtitle|default:'' }}" placeholder="An optional subtitle displayed below the headline...">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Category</label>
+              <input type="text" name="category" id="categorySelect" list="categoryOptions" value="{{ post.get_category_display|default:'' }}" placeholder="Choose or type a new category..." autocomplete="off">
+              <datalist id="categoryOptions">
+                <option value="Capital Strategy">
+                <option value="Preparation">
+                <option value="Government Programs">
+                <option value="Access to Capital">
+                <option value="Market Analysis">
+                <option value="Strategy">
+                <option value="Cash Flow">
+                <option value="Industry Focus">
+                <option value="SBA Loans">
+                <option value="Business Growth">
+              </datalist>
+            </div>
+            <div class="form-group">
+              <label>Featured Image</label>
+              <input type="file" name="featured_image" accept="image/*">
+              {% if post.featured_image %}
+              <span style="font-size:0.74rem;color:var(--text-light);display:block;margin-top:3px;">Current: {{ post.featured_image.name }}</span>
+              {% endif %}
+            </div>
+          </div>
+          <div class="form-row full">
+            <div class="form-group">
+              <label>Excerpt (appears on listing pages)</label>
+              <textarea name="excerpt" id="excerptInput" placeholder="A brief summary that appears on the blog listing page...">{{ post.excerpt|default:'' }}</textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="editor-panel">
+          <div class="editor-toolbar" id="toolbar">
+            <button type="button" class="tbtn" data-cmd="bold" title="Bold (Ctrl+B)"><b>B</b></button>
+            <button type="button" class="tbtn" data-cmd="italic" title="Italic (Ctrl+I)"><i>I</i></button>
+            <button type="button" class="tbtn" data-cmd="underline" title="Underline (Ctrl+U)"><u>U</u></button>
+            <button type="button" class="tbtn" data-cmd="strikethrough" title="Strikethrough"><s>S</s></button>
+            <span class="tsep"></span>
+            <span style="font-size:0.65rem;color:var(--gray-600);font-weight:600;">Text Color</span>
+            <input type="color" class="tcolor" id="foreColorPicker" title="Text color" value="#030308">
+            <span style="font-size:0.65rem;color:var(--gray-600);font-weight:600;">Highlight</span>
+            <input type="color" class="tcolor" id="hiliteColorPicker" title="Background highlight" value="#ffff00">
+            <span class="tsep"></span>
+            <select class="tfontsize" id="fontSizeSelect" title="Font size">
+              <option value="1">Normal</option>
+              <option value="2">Small</option>
+              <option value="3">Medium</option>
+              <option value="4">Large</option>
+              <option value="5">XL</option>
+              <option value="6">XXL</option>
+              <option value="7">3XL</option>
+            </select>
+            <span class="tsep"></span>
+            <button type="button" class="tbtn" data-cmd="formatBlock" data-arg="h1" title="Heading 1">H1</button>
+            <button type="button" class="tbtn" data-cmd="formatBlock" data-arg="h2" title="Heading 2">H2</button>
+            <button type="button" class="tbtn" data-cmd="formatBlock" data-arg="h3" title="Heading 3">H3</button>
+            <span class="tsep"></span>
+            <button type="button" class="tbtn" data-cmd="insertUnorderedList" title="Bulleted list">&#x2022;</button>
+            <button type="button" class="tbtn" data-cmd="insertOrderedList" title="Numbered list">1.</button>
+            <button type="button" class="tbtn" data-cmd="blockquote" title="Blockquote">&#x201C;</button>
+            <button type="button" class="tbtn" data-cmd="code" title="Code block">&lt;/&gt;</button>
+            <span class="tsep"></span>
+            <button type="button" class="tbtn" data-cmd="justifyLeft" title="Align left">&#x2190;</button>
+            <button type="button" class="tbtn" data-cmd="justifyCenter" title="Center">&#x2194;</button>
+            <button type="button" class="tbtn" data-cmd="justifyRight" title="Align right">&#x2192;</button>
+            <span class="tsep"></span>
+            <button type="button" class="tbtn" data-cmd="link" title="Insert / Edit link">&#x1F517;</button>
+            <button type="button" class="tbtn" data-cmd="unlink" title="Remove link">&#x2715;</button>
+            <button type="button" class="tbtn" data-cmd="removeFormat" title="Clear formatting">&#x2205;</button>
+          </div>
+          <div class="editor-area" id="editor" contenteditable="true"></div>
+          <div class="editor-footer-tools">
+            <label for="imageUpload">&#x1F5BC; Insert image:</label>
+            <input type="file" id="imageUpload" accept="image/*" style="font-size:0.82rem;">
+            <span style="font-size:0.76rem;color:var(--text-light);">Drag corner handle to resize after inserting.</span>
+          </div>
+        </div>
+
+        <div class="publish-bar">
+          {% if post and post.is_published %}
+          <span style="display:flex;align-items:center;gap:7px;font-size:0.84rem;font-weight:600;color:#059669;">&#x2713; Published</span>
+          <span class="pub-hint">at <strong>/blog/{{ post.slug }}/</strong></span>
+          <span class="spacer"></span>
+          <button type="button" class="btn btn-outline btn-sm" onclick="savePost(false)">Unpublish</button>
+          {% else %}
+          <span style="display:flex;align-items:center;gap:7px;font-size:0.84rem;font-weight:600;color:var(--text-light);">&#x25CB; Draft</span>
+          <span class="pub-hint">Click <strong>Publish</strong> to make it live.</span>
+          <span class="spacer"></span>
+          {% endif %}
+        </div>
+      </form>
+    </main>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <div class="modal-overlay" id="linkModal">
+    <div class="modal">
+      <h3>Insert Link</h3>
+      <input type="url" id="linkUrl" placeholder="https://example.com" autocomplete="off">
+      <input type="text" id="linkText" placeholder="Link display text (optional)">
+      <label style="display:flex;align-items:center;gap:6px;font-size:0.82rem;color:var(--text-light);margin-bottom:12px;font-family:var(--font);">
+        <input type="checkbox" id="linkNewTab"> Open in new tab
+      </label>
+      <div class="modal-actions">
+        <button class="btn btn-outline btn-sm" onclick="closeModal('linkModal')">Cancel</button>
+        <button class="btn btn-gold btn-sm" onclick="insertLink()">Insert Link</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ── Sidebar ──
+    const sidebar = document.getElementById('sidebar');
+    const toggleBtn = document.getElementById('sidebarToggle');
+    const mainContent = document.getElementById('mainContent');
+    const sidebarClose = document.getElementById('sidebarClose');
+    function openSidebar(){sidebar.classList.add('open');toggleBtn.classList.remove('closed');toggleBtn.classList.add('open');mainContent.classList.add('shifted');}
+    function closeSidebar(){sidebar.classList.remove('open');toggleBtn.classList.remove('open');toggleBtn.classList.add('closed');mainContent.classList.remove('shifted');}
+    toggleBtn.addEventListener('click',()=>{sidebar.classList.contains('open')?closeSidebar():openSidebar();});
+    sidebarClose.addEventListener('click',closeSidebar);
+
+    function closeModal(id){document.getElementById(id).style.display='none';}
+    function openModal(id){document.getElementById(id).style.display='flex';}
+
+    const editor = document.getElementById('editor');
+    const form = document.getElementById('postForm');
+    var savedSel = null; // saved selection range for hyperlink insertion
+
+    // ── Load existing content ──
+    editor.innerHTML = `{{ post.content|safe|default:'' }}`;
+
+    function showToast(msg, isErr) {
+      var t = document.getElementById('toast');
+      t.textContent = msg;
+      t.className = 'toast ' + (isErr ? 'error' : 'success') + ' show';
+      clearTimeout(t._t);
+      t._t = setTimeout(function(){ t.classList.remove('show'); }, 3500);
+    }
+
+    // ── Toolbar ──
+    document.getElementById('toolbar').addEventListener('click', function(e) {
+      const btn = e.target.closest('.tbtn');
+      if (!btn) return;
+      const cmd = btn.dataset.cmd;
+      const arg = btn.dataset.arg || null;
+      e.preventDefault();
+      editor.focus();
+
+      if (cmd === 'code') {
+        const sel = window.getSelection();
+        if (sel.rangeCount && sel.toString().trim()) {
+          const range = sel.getRangeAt(0);
+          const pre = document.createElement('pre');
+          const code = document.createElement('code');
+          code.textContent = sel.toString();
+          pre.appendChild(code);
+          range.deleteContents();
+          range.insertNode(pre);
+          const br = document.createElement('br');
+          pre.after(br);
+        } else {
+          const pre = document.createElement('pre');
+          const code = document.createElement('code');
+          code.textContent = '// your code here';
+          pre.appendChild(code);
+          editor.appendChild(pre);
+          editor.appendChild(document.createElement('br'));
+        }
+      } else if (cmd === 'link') {
+        const sel = window.getSelection();
+        if (sel.rangeCount && sel.toString().trim()) {
+          savedSel = sel.getRangeAt(0).cloneRange();
+        } else {
+          savedSel = null;
+        }
+        const existingLink = sel.anchorNode ? sel.anchorNode.parentElement.closest('a') : null;
+        document.getElementById('linkText').value = sel.toString() || (existingLink ? existingLink.textContent : '');
+        document.getElementById('linkUrl').value = existingLink ? existingLink.href : '';
+        document.getElementById('linkNewTab').checked = existingLink ? existingLink.target === '_blank' : true;
+        openModal('linkModal');
+      } else if (cmd === 'unlink') {
+        document.execCommand('unlink');
+      } else if (cmd === 'formatBlock') {
+        document.execCommand(cmd, false, arg);
+      } else if (cmd === 'blockquote') {
+        document.execCommand('formatBlock', false, 'blockquote');
+        const bq = editor.querySelector('blockquote:last-of-type');
+        if (bq && !bq.textContent.trim()) bq.textContent = 'Enter quote...';
+      } else {
+        document.execCommand(cmd, false, arg);
+      }
+    });
+
+    // ── Color pickers ──
+    document.getElementById('foreColorPicker').addEventListener('input', function() {
+      editor.focus();
+      document.execCommand('foreColor', false, this.value);
+    });
+    document.getElementById('hiliteColorPicker').addEventListener('input', function() {
+      editor.focus();
+      document.execCommand('hiliteColor', false, this.value);
+    });
+
+    // ── Font size ──
+    document.getElementById('fontSizeSelect').addEventListener('change', function() {
+      editor.focus();
+      document.execCommand('fontSize', false, this.value);
+      this.value = '1';
+    });
+
+    // ── Keyboard shortcuts ──
+    editor.addEventListener('keydown', function(e) {
+      if (e.ctrlKey || e.metaKey) {
+        switch(e.key.toLowerCase()) {
+          case 'b': e.preventDefault(); document.execCommand('bold'); break;
+          case 'i': e.preventDefault(); document.execCommand('italic'); break;
+          case 'u': e.preventDefault(); document.execCommand('underline'); break;
+          case 'k': e.preventDefault();
+            const ks = window.getSelection();
+            if (ks.rangeCount && ks.toString().trim()) {
+              savedSel = ks.getRangeAt(0).cloneRange();
+            } else { savedSel = null; }
+            document.getElementById('linkText').value = ks.toString();
+            document.getElementById('linkUrl').value = '';
+            document.getElementById('linkNewTab').checked = true;
+            document.getElementById('linkModal').style.display='flex'; break;
+        }
+      }
+    });
+
+    // ── Insert link (from modal) ──
+    function insertLink() {
+      const url = document.getElementById('linkUrl').value.trim();
+      const text = document.getElementById('linkText').value.trim();
+      const newTab = document.getElementById('linkNewTab').checked;
+      if (!url) { showToast('Please enter a URL.', true); return }
+      editor.focus();
+
+      // restore saved selection
+      if (savedSel) {
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(savedSel);
+      }
+
+      const sel = window.getSelection();
+      if (sel.rangeCount) {
+        const range = sel.getRangeAt(0);
+        const linkText = text || (range.toString().trim() || url);
+        range.deleteContents();
+        const a = document.createElement('a');
+        a.href = url;
+        a.textContent = linkText;
+        a.target = newTab ? '_blank' : '_self';
+        a.rel = newTab ? 'noopener' : '';
+        range.insertNode(a);
+        // move cursor after the link
+        const newRange = document.createRange();
+        newRange.setStartAfter(a);
+        newRange.collapse(true);
+        sel.removeAllRanges();
+        sel.addRange(newRange);
+      }
+      savedSel = null;
+      closeModal('linkModal');
+    }
+    document.getElementById('linkUrl').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') { e.preventDefault(); insertLink(); }
+    });
+
+    // ── Image upload with smart resize & delete ──
+    document.getElementById('imageUpload').addEventListener('change', function() {
+      const file = this.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const wrapper = document.createElement('div');
+        wrapper.style.cssText = 'position:relative;display:inline-block;max-width:100%;margin:24px 0;user-select:none;';
+        wrapper.setAttribute('contenteditable', 'false');
+        wrapper.className = 'editor-image-wrapper';
+
+        const img = document.createElement('img');
+        img.src = e.target.result;
+        img.alt = 'Blog image';
+        img.style.cssText = 'display:block;max-width:100%;border-radius:10px;cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,0.06);';
+
+        const handle = document.createElement('div');
+        handle.style.cssText = 'position:absolute;bottom:0;right:0;width:28px;height:28px;cursor:nwse-resize;z-index:5;opacity:0;transition:opacity 0.2s;';
+        handle.innerHTML = '<svg width="20" height="20" viewBox="0 0 20 20" style="position:absolute;bottom:2px;right:2px;"><path d="M20 0v20H0L20 0z" fill="#c9a84c" fill-opacity="0.9"/></svg>';
+        handle.title = 'Drag to resize image';
+
+        const delBtn = document.createElement('button');
+        delBtn.innerHTML = '&times;';
+        delBtn.title = 'Remove image';
+        delBtn.type = 'button';
+        delBtn.style.cssText = 'position:absolute;top:6px;right:6px;width:26px;height:26px;border-radius:50%;border:none;background:rgba(0,0,0,0.65);color:#fff;font-size:1rem;line-height:1;cursor:pointer;z-index:6;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.2s;';
+        delBtn.addEventListener('click', function(ev) {
+          ev.preventDefault();
+          ev.stopPropagation();
+          wrapper.remove();
+          showToast('Image removed.', false);
+        });
+
+        wrapper.appendChild(img);
+        wrapper.appendChild(handle);
+        wrapper.appendChild(delBtn);
+
+        wrapper.addEventListener('mouseenter', function() {
+          handle.style.opacity = '1';
+          delBtn.style.opacity = '1';
+        });
+        wrapper.addEventListener('mouseleave', function() {
+          handle.style.opacity = '0';
+          delBtn.style.opacity = '0';
+        });
+
+        var dragStartX, dragStartW;
+        handle.addEventListener('mousedown', function(ev) {
+          ev.preventDefault();
+          ev.stopPropagation();
+          document.body.style.cursor = 'nwse-resize';
+          dragStartX = ev.clientX;
+          dragStartW = img.offsetWidth;
+          document.addEventListener('mousemove', onDrag, true);
+          document.addEventListener('mouseup', onDragEnd, true);
+        });
+        function onDrag(ev) {
+          var newW = Math.max(80, dragStartW + (ev.clientX - dragStartX));
+          img.style.width = newW + 'px';
+          img.style.height = 'auto';
+        }
+        function onDragEnd() {
+          document.body.style.cursor = '';
+          document.removeEventListener('mousemove', onDrag, true);
+          document.removeEventListener('mouseup', onDragEnd, true);
+        }
+
+        editor.appendChild(wrapper);
+        editor.appendChild(document.createElement('br'));
+        showToast('Image inserted! Hover for resize handle & delete button.', false);
+      };
+      reader.readAsDataURL(file);
+      this.value = '';
+    });
+
+    // allow deleting image wrappers with Backspace/Delete
+    editor.addEventListener('keydown', function(e) {
+      if (e.key === 'Backspace' || e.key === 'Delete') {
+        const sel = window.getSelection();
+        if (sel.rangeCount) {
+          const node = sel.anchorNode;
+          let target = node && node.nodeType === 3 ? node.parentElement : node;
+          while (target && target !== editor) {
+            if (target.classList && target.classList.contains('editor-image-wrapper')) {
+              e.preventDefault();
+              target.remove();
+              showToast('Image removed.', false);
+              return;
+            }
+            target = target.parentElement;
+          }
+        }
+      }
+    });
+
+    // ── Drag & drop image into editor ──
+    editor.addEventListener('dragover', function(e) {
+      e.preventDefault();
+    });
+    editor.addEventListener('drop', function(e) {
+      e.preventDefault();
+      const file = e.dataTransfer && e.dataTransfer.files[0];
+      if (!file || !file.type.startsWith('image/')) {
+        showToast('Only image files can be dropped here.', true);
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        const wrapper = document.createElement('div');
+        wrapper.style.cssText = 'position:relative;display:inline-block;max-width:100%;margin:24px 0;user-select:none;';
+        wrapper.setAttribute('contenteditable', 'false');
+        wrapper.className = 'editor-image-wrapper';
+
+        const img = document.createElement('img');
+        img.src = ev.target.result;
+        img.alt = 'Blog image';
+        img.style.cssText = 'display:block;max-width:100%;border-radius:10px;cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,0.06);';
+
+        const handle = document.createElement('div');
+        handle.style.cssText = 'position:absolute;bottom:0;right:0;width:28px;height:28px;cursor:nwse-resize;z-index:5;opacity:0;transition:opacity 0.2s;';
+        handle.innerHTML = '<svg width="20" height="20" viewBox="0 0 20 20" style="position:absolute;bottom:2px;right:2px;"><path d="M20 0v20H0L20 0z" fill="#c9a84c" fill-opacity="0.9"/></svg>';
+        handle.title = 'Drag to resize image';
+
+        const delBtn = document.createElement('button');
+        delBtn.innerHTML = '&times;';
+        delBtn.title = 'Remove image';
+        delBtn.type = 'button';
+        delBtn.style.cssText = 'position:absolute;top:6px;right:6px;width:26px;height:26px;border-radius:50%;border:none;background:rgba(0,0,0,0.65);color:#fff;font-size:1rem;line-height:1;cursor:pointer;z-index:6;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.2s;';
+        delBtn.addEventListener('click', function(ev2) {
+          ev2.preventDefault();
+          ev2.stopPropagation();
+          wrapper.remove();
+          showToast('Image removed.', false);
+        });
+
+        wrapper.appendChild(img);
+        wrapper.appendChild(handle);
+        wrapper.appendChild(delBtn);
+
+        wrapper.addEventListener('mouseenter', function() {
+          handle.style.opacity = '1';
+          delBtn.style.opacity = '1';
+        });
+        wrapper.addEventListener('mouseleave', function() {
+          handle.style.opacity = '0';
+          delBtn.style.opacity = '0';
+        });
+
+        var dragStartX, dragStartW;
+        handle.addEventListener('mousedown', function(ev3) {
+          ev3.preventDefault();
+          ev3.stopPropagation();
+          document.body.style.cursor = 'nwse-resize';
+          dragStartX = ev3.clientX;
+          dragStartW = img.offsetWidth;
+          document.addEventListener('mousemove', onDrag, true);
+          document.addEventListener('mouseup', onDragEnd, true);
+        });
+        function onDrag(ev4) {
+          var newW = Math.max(80, dragStartW + (ev4.clientX - dragStartX));
+          img.style.width = newW + 'px';
+          img.style.height = 'auto';
+        }
+        function onDragEnd() {
+          document.body.style.cursor = '';
+          document.removeEventListener('mousemove', onDrag, true);
+          document.removeEventListener('mouseup', onDragEnd, true);
+        }
+
+        // Insert at drop position
+        const range = document.caretRangeFromPoint(e.clientX, e.clientY);
+        if (range) {
+          range.insertNode(wrapper);
+          const br = document.createElement('br');
+          wrapper.after(br);
+        } else {
+          editor.appendChild(wrapper);
+          editor.appendChild(document.createElement('br'));
+        }
+        showToast('Image inserted! Hover for resize handle & delete button.', false);
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // ── Paste handling ──
+    editor.addEventListener('paste', function(e) {
+      const items = (e.clipboardData || window.clipboardData).items;
+      if (items) {
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].type.startsWith('image/')) {
+            e.preventDefault();
+            const blob = items[i].getAsFile();
+            const reader2 = new FileReader();
+            reader2.onload = function(ev) {
+              const wrapper = document.createElement('div');
+              wrapper.style.cssText = 'position:relative;display:inline-block;max-width:100%;margin:24px 0;user-select:none;';
+              wrapper.setAttribute('contenteditable', 'false');
+              wrapper.className = 'editor-image-wrapper';
+              const img = document.createElement('img');
+              img.src = ev.target.result;
+              img.alt = 'Blog image';
+              img.style.cssText = 'display:block;max-width:100%;border-radius:10px;cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,0.06);';
+              const handle = document.createElement('div');
+              handle.style.cssText = 'position:absolute;bottom:0;right:0;width:28px;height:28px;cursor:nwse-resize;z-index:5;opacity:0;transition:opacity 0.2s;';
+              handle.innerHTML = '<svg width="20" height="20" viewBox="0 0 20 20" style="position:absolute;bottom:2px;right:2px;"><path d="M20 0v20H0L20 0z" fill="#c9a84c" fill-opacity="0.9"/></svg>';
+              handle.title = 'Drag to resize image';
+              const delBtn = document.createElement('button');
+              delBtn.innerHTML = '&times;';
+              delBtn.title = 'Remove image';
+              delBtn.type = 'button';
+              delBtn.style.cssText = 'position:absolute;top:6px;right:6px;width:26px;height:26px;border-radius:50%;border:none;background:rgba(0,0,0,0.65);color:#fff;font-size:1rem;line-height:1;cursor:pointer;z-index:6;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.2s;';
+              delBtn.addEventListener('click', function(ev2) { ev2.preventDefault(); ev2.stopPropagation(); wrapper.remove(); showToast('Image removed.', false); });
+              wrapper.appendChild(img);
+              wrapper.appendChild(handle);
+              wrapper.appendChild(delBtn);
+              wrapper.addEventListener('mouseenter', function() { handle.style.opacity = '1'; delBtn.style.opacity = '1'; });
+              wrapper.addEventListener('mouseleave', function() { handle.style.opacity = '0'; delBtn.style.opacity = '0'; });
+              var dsx, dsw;
+              handle.addEventListener('mousedown', function(ev3) {
+                ev3.preventDefault(); ev3.stopPropagation();
+                document.body.style.cursor = 'nwse-resize';
+                dsx = ev3.clientX; dsw = img.offsetWidth;
+                document.addEventListener('mousemove', onDrag2, true);
+                document.addEventListener('mouseup', onEnd2, true);
+              });
+              function onDrag2(ev4) { var nw = Math.max(80, dsw + (ev4.clientX - dsx)); img.style.width = nw + 'px'; img.style.height = 'auto'; }
+              function onEnd2() { document.body.style.cursor = ''; document.removeEventListener('mousemove', onDrag2, true); document.removeEventListener('mouseup', onEnd2, true); }
+              const sel = window.getSelection();
+              if (sel.rangeCount) { sel.getRangeAt(0).insertNode(wrapper); const br = document.createElement('br'); wrapper.after(br); } else { editor.appendChild(wrapper); editor.appendChild(document.createElement('br')); }
+              showToast('Image pasted! Hover for resize & delete.', false);
+            };
+            reader2.readAsDataURL(blob);
+            return;
+          }
+        }
+      }
+      e.preventDefault();
+      const html = (e.clipboardData || window.clipboardData).getData('text/html');
+      const text = (e.clipboardData || window.clipboardData).getData('text/plain');
+      if (html && html.trim()) {
+        const s = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,'').replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi,'').replace(/<!--[\s\S]*?-->/g,'');
+        document.execCommand('insertHTML', false, s);
+      } else if (text) {
+        document.execCommand('insertText', false, text);
+      }
+    });
+
+    // ── Save ──
+    async function savePost(publish) {
+      document.getElementById('isPublishedInput').value = publish ? 'on' : '';
+
+      var fd = new FormData(form);
+      fd.set('content', editor.innerHTML);
+      fd.set('is_published', publish ? 'on' : '');
+
+      var saveBtn = document.getElementById('publishBtn');
+      var draftBtn = document.querySelector('.btn-gold');
+      var orig = saveBtn.textContent;
+      saveBtn.textContent = 'Saving...';
+      saveBtn.disabled = true;
+      if (draftBtn) { draftBtn.textContent = 'Saving...'; draftBtn.disabled = true; }
+
+      try {
+        var res = await fetch('/superadmin/blog/save/', {
+          method: 'POST',
+          credentials: 'same-origin',
+          body: fd
+        });
+        var txt = await res.text();
+        var data;
+        try { data = JSON.parse(txt); }
+        catch(e) { showToast('Server error: ' + txt.substring(0, 100), true); saveBtn.textContent = orig; saveBtn.disabled = false; if (draftBtn) { draftBtn.textContent = 'Save Draft'; draftBtn.disabled = false; } return; }
+
+        if (data.success) {
+          showToast(publish ? 'Published! Post is live.' : 'Saved as draft.', false);
+          if (!form.querySelector('[name=post_id]').value && data.post_id) {
+            form.querySelector('[name=post_id]').value = data.post_id;
+          }
+          if (data.slug) {
+            var el = document.querySelector('.publish-bar .pub-hint');
+            if (el) el.innerHTML = 'at <strong>/blog/' + data.slug + '/</strong>';
+          }
+          if (publish) {
+            var bar = document.querySelector('.publish-bar');
+            if (bar) bar.innerHTML = '<span style=\"display:flex;align-items:center;gap:7px;font-size:0.84rem;font-weight:600;color:#059669;\">&#x2713; Published</span><span class=\"pub-hint\">at <strong>/blog/' + (data.slug||'') + '</strong></span><span class=\"spacer\"></span><button type=\"button\" class=\"btn btn-outline btn-sm\" onclick=\"savePost(false)\">Unpublish</button>';
+          }
+        } else {
+          showToast(data.error || 'Save failed.', true);
+        }
+      } catch(err) {
+        showToast('Network error. Check console.', true);
+        console.error(err);
+      }
+      saveBtn.textContent = orig;
+      saveBtn.disabled = false;
+      if (draftBtn) { draftBtn.textContent = 'Save Draft'; draftBtn.disabled = false; }
+    }
+
+    // ── Preview ──
+    function previewPost() {
+      const w = window.open('', '_blank', 'width=1000,height=800');
+      w.document.write('<!DOCTYPE html><html><head><title>Preview</title>' +
+        '<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">' +
+        '<style>body{max-width:780px;margin:60px auto;padding:0 24px;font-family:"Lora",Georgia,serif;font-size:1.3rem;line-height:1.88;color:#000;font-weight:400;}' +
+        'h1{font-size:2.2rem;line-height:1.25;margin:28px 0 14px;color:#000;font-family:"Lora",Georgia,serif;}h2{font-size:1.65rem;line-height:1.3;margin:24px 0 12px;border-bottom:2px solid #eee;padding-bottom:8px;color:#000;font-family:"Lora",Georgia,serif;}' +
+        'h3{font-size:1.35rem;margin:20px 0 10px;color:#000;font-family:"Lora",Georgia,serif;}' +
+        'p{margin:0 0 20px;}ul,ol{margin:8px 0 20px 28px;}li{margin-bottom:8px;}' +
+        'blockquote{border-left:4px solid #c9a84c;margin:20px 0;padding:14px 24px;color:#000;font-style:italic;background:#faf8f2;border-radius:0 8px 8px 0;font-size:1.15rem;}' +
+        'pre{background:#111827;color:#e5e7eb;padding:24px 28px;border-radius:10px;overflow-x:auto;font-family:monospace;font-size:0.88rem;line-height:1.7;}' +
+        'code{font-family:monospace;background:#f1f5f9;padding:2px 6px;border-radius:4px;}pre code{background:none;padding:0;}' +
+        'img{max-width:100%;border-radius:10px;margin:24px 0;box-shadow:0 4px 20px rgba(0,0,0,0.06);}' +
+        'a{color:#c9a84c;text-decoration:none;border-bottom:1px solid rgba(201,168,76,0.35);}' +
+        '.preview-sub{color:#6b7280;font-size:1.25rem;font-style:italic;margin-bottom:24px;}' +
+        '.preview-meta{color:#6b7280;font-size:0.9rem;font-family:Inter,sans-serif;margin-bottom:32px;}' +
+        '</style></head><body>' +
+        '<h1>' + document.getElementById('titleInput').value + '</h1>' +
+        (document.getElementById('subtitleInput').value ? '<p class="preview-sub">' + document.getElementById('subtitleInput').value + '</p>' : '') +
+        '<p class="preview-meta">' + document.getElementById('categorySelect').value + ' &middot; Preview</p>' +
+        editor.innerHTML +
+        '</body></html>');
+    }
+  </script>
+</body>
+</html>

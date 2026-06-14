@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Partner Dashboard | Atlas Fund Capital</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root { --primary: #0a0e27; --accent: #c9a84c; --white: #fff; --cream: #faf8f2; --gray-200: #e2e8f0; --gray-700: #334155; --text-light: #6b7280; --green: #0d9488; --red: #dc2626; --font: 'Inter', sans-serif; --font-heading: 'Cormorant Garamond', serif; --sidebar-w: 250px; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font); background: var(--cream); color: var(--primary); overflow-x: hidden; }
+    .dash-wrap { display: flex; min-height: 100vh; }
+    .sidebar { width: var(--sidebar-w); background: var(--primary); color: white; padding: 28px 20px; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 50; }
+    .sidebar h3 { font-family: var(--font-heading); font-size: 1.3rem; margin-bottom: 8px; color: var(--accent); }
+    .sidebar .sub { font-size: 0.76rem; color: rgba(255,255,255,0.4); margin-bottom: 28px; }
+    .sidebar a { display: block; color: rgba(255,255,255,0.6); padding: 10px 14px; border-radius: 10px; margin-bottom: 4px; text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: all 0.2s; }
+    .sidebar a:hover, .sidebar a.active { background: rgba(255,255,255,0.08); color: white; }
+    .sidebar .logout { margin-top: auto; color: rgba(255,255,255,0.4); }
+    .main { flex: 1; margin-left: var(--sidebar-w); padding: 40px; min-width: 0; }
+    .main h1 { font-family: var(--font-heading); font-size: 1.8rem; margin-bottom: 6px; }
+    .welcome { color: var(--text-light); font-size: 0.9rem; margin-bottom: 32px; }
+    .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 32px; }
+    .stat-card { background: white; border-radius: 14px; padding: 22px; border: 1px solid var(--gray-200); box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+    .stat-card .val { font-size: 2rem; font-weight: 700; font-family: var(--font-heading); color: var(--accent); }
+    .stat-card .lbl { font-size: 0.8rem; color: var(--text-light); margin-top: 4px; }
+    .panel { background: white; border-radius: 14px; border: 1px solid var(--gray-200); padding: 28px; margin-bottom: 28px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+    .panel h2 { font-family: var(--font-heading); font-size: 1.2rem; margin-bottom: 16px; }
+    .ref-link { background: #f0f9ff; border: 1px dashed var(--accent); border-radius: 10px; padding: 14px 18px; font-family: monospace; font-size: 0.88rem; word-break: break-all; color: var(--accent); margin: 12px 0; user-select: all; }
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px; border-radius: 10px; font-size: 0.88rem; font-weight: 600; cursor: pointer; transition: all 0.2s; text-decoration: none; border: none; font-family: var(--font); }
+    .btn-gold { background: var(--accent); color: var(--primary); }
+    .btn-gold:hover { background: #b08a30; }
+    .btn-outline { background: transparent; border: 1px solid var(--gray-200); color: var(--primary); }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-sm { padding: 6px 14px; font-size: 0.8rem; }
+    .field-group { margin-bottom: 16px; }
+    .field-group label { display: block; font-size: 0.83rem; font-weight: 600; color: var(--gray-700); margin-bottom: 5px; }
+    .field-group input, .field-group select, .field-group textarea { width: 100%; padding: 10px 14px; border: 1px solid var(--gray-200); border-radius: 10px; font-size: 0.9rem; font-family: var(--font); transition: all 0.2s; background: white; }
+    .field-group input:focus, .field-group select:focus, .field-group textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(201,168,76,0.1); }
+    .field-group textarea { resize: vertical; min-height: 80px; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+    th { text-align: left; padding: 11px 14px; border-bottom: 2px solid var(--gray-200); color: var(--text-light); font-weight: 600; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.5px; }
+    td { padding: 11px 14px; border-bottom: 1px solid var(--gray-200); }
+    .badge { display: inline-block; padding: 3px 10px; border-radius: 100px; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    .badge-pending { background: #fef9e7; color: #b8860b; }
+    .badge-qualified { background: #e6f7f5; color: var(--green); }
+    .badge-non_qualified { background: #fef2f2; color: var(--red); }
+    .badge-archived { background: #f1f5f9; color: #64748b; }
+    .badge-submitted { background: #fef9e7; color: #b8860b; }
+    .badge-approved { background: #e6f7f5; color: var(--green); }
+    .badge-rejected { background: #fef2f2; color: var(--red); }
+    .badge-reviewing { background: #ede9fe; color: #7c3aed; }
+    .payouts-list { font-size: 0.85rem; }
+    .payouts-list .pr { padding: 10px 0; border-bottom: 1px solid var(--gray-200); }
+    .toast { position: fixed; top: 20px; right: 20px; padding: 14px 22px; border-radius: 10px; color: white; font-weight: 600; font-size: 0.88rem; z-index: 2000; opacity: 0; transform: translateX(40px); transition: all 0.3s; pointer-events: none; }
+    .toast.show { opacity: 1; transform: translateX(0); }
+    .toast-success { background: var(--green); }
+    .toast-error { background: var(--red); }
+    @media (max-width: 768px) {
+      .dash-wrap { flex-direction: column; }
+      .sidebar { position: static; width: 100%; padding: 20px; }
+      .main { margin-left: 0; padding: 24px 16px; }
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+      .form-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="toast" id="toast"></div>
+  <div class="dash-wrap">
+    <aside class="sidebar">
+      <h3>Atlas Partner</h3>
+      <p class="sub">{{ partner.referral_code }}</p>
+      <a href="/dashboard/" class="{% if nav_active == 'dashboard' %}active{% endif %}">Dashboard</a>
+      <a href="/dashboard/submit-deal/" class="{% if nav_active == 'submit_deal' %}active{% endif %}">Submit Deal</a>
+      <a href="/dashboard/wallet/" class="{% if nav_active == 'wallet' %}active{% endif %}">Wallet</a>
+      <a href="/dashboard/bank/" class="{% if nav_active == 'bank' %}active{% endif %}">Bank Account</a>
+      <a href="/partner/logout/" class="logout">Sign Out</a>
+    </aside>
+
+    <main class="main">
+      <h1>Welcome, {{ partner.get_full_name|default:partner.email }}</h1>
+      <p class="welcome">Referral code: <strong>{{ partner.referral_code }}</strong></p>
+
+      <div class="stats-row">
+        <div class="stat-card"><div class="val">{{ total_leads }}</div><div class="lbl">Total Leads</div></div>
+        <div class="stat-card"><div class="val">{{ qualified }}</div><div class="lbl">Qualified</div></div>
+        <div class="stat-card"><div class="val">{{ pending }}</div><div class="lbl">Pending</div></div>
+        <div class="stat-card"><div class="val">${{ wallet|default:0|floatformat:2 }}</div><div class="lbl">Wallet (min payout ${{ min_payout|floatformat:0 }})</div></div>
+      </div>
+
+      <div class="panel">
+        <h2>Your Referral Link</h2>
+        <div class="ref-link" onclick="copyRef()" title="Click to copy">{{ referral_link }}</div>
+        <p style="font-size:0.82rem;color:var(--text-light);">Share this link. Leads submitted via your link are attributed to you. Cookie lasts 40 days.</p>
+      </div>
+
+      <div class="panel">
+        <h2>Recent Leads</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Name</th><th>Company</th><th>Email</th><th>Revenue</th><th>Status</th><th>Date</th></tr></thead>
+            <tbody>
+              {% for lead in leads %}
+              <tr>
+                <td>{{ lead.full_name }}</td>
+                <td>{{ lead.company_name }}</td>
+                <td>{{ lead.email }}</td>
+                <td>{{ lead.monthly_revenue }}</td>
+                <td><span class="badge badge-{{ lead.status }}">{{ lead.get_status_display }}</span></td>
+                <td>{{ lead.created_at|date:"M d, Y" }}</td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="6" style="text-align:center;padding:32px;color:var(--text-light);">No leads yet. Share your referral link to get started.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% if leads.has_other_pages %}
+        <div style="display:flex;gap:8px;margin-top:16px;justify-content:center;">
+          {% if leads.has_previous %}<a href="?page={{ leads.previous_page_number }}" class="btn btn-outline btn-sm">Previous</a>{% endif %}
+          <span style="padding:6px 12px;font-size:0.85rem;color:var(--text-light);">Page {{ leads.number }} of {{ leads.paginator.num_pages }}</span>
+          {% if leads.has_next %}<a href="?page={{ leads.next_page_number }}" class="btn btn-outline btn-sm">Next</a>{% endif %}
+        </div>
+        {% endif %}
+      </div>
+    </main>
+  </div>
+  <script>
+    function copyRef() {
+      var el = document.querySelector('.ref-link');
+      navigator.clipboard.writeText(el.textContent).then(function() {
+        var t = document.getElementById('toast');
+        t.textContent = 'Referral link copied!'; t.className = 'toast toast-success show';
+        setTimeout(function() { t.className = 'toast toast-success'; }, 2000);
+      });
+    }
+  </script>
+</body>
+</html>
