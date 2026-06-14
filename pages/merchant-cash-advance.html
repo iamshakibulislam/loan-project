@@ -1,150 +1,83 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Revenue-Based Financing — Access $5K to $20M in capital secured against your future receivables. Flexible repayment. Funding as soon as 24 hours.">
-  <title>Revenue-Based Financing | Atlas Fund Capital</title>
-  <link href="/https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/css/style.css">
-</head>
-<body>
-  <header class="header">
-    <div class="container header-inner">
-      <a href="/" class="logo"><span class="logo-icon">A</span> Atlas Fund Capital</a>
-      <nav class="nav">
-        <ul class="nav-list">
-          <li class="nav-item">
-            <span class="nav-link active">Financing Solutions <span class="arrow">▼</span></span>
-            <div class="dropdown">
-              <a href="/product/merchant-cash-advance/" class="dropdown-link">Revenue-Based Financing</a>
-              <a href="/product/line-of-credit/" class="dropdown-link">Business Line of Credit</a>
-              <a href="/product/sba-loans/" class="dropdown-link">SBA Loans</a>
-              <a href="/product/term-loans/" class="dropdown-link">Term Loans</a>
-              <a href="/product/equipment-financing/" class="dropdown-link">Equipment Financing</a>
-              <a href="/product/invoice-factoring/" class="dropdown-link">Invoice Factoring</a>
-              <a href="/product/business-acquisition/" class="dropdown-link">Business Acquisition</a>
-            </div>
-          </li>
-          <li class="nav-item"><a href="/about/" class="nav-link">About</a></li>
-          <li class="nav-item"><a href="/how-it-works/" class="nav-link">How It Works</a></li>
-          <li class="nav-item"><a href="/resources/" class="nav-link">Resources</a></li>
-          <li class="nav-item"><a href="/blog/" class="nav-link">Insights</a></li>
+{% extends "base.html" %}
+{% load static %}
+
+{% block meta %}<meta name="description" content="Revenue-Based Financing — Access $5K to $20M in capital secured against your future receivables. Flexible repayment. Funding as soon as 24 hours.">{% endblock %}
+
+{% block title %}Revenue-Based Financing | Atlas Fund Capital{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <h1>Revenue-Based <em>Financing</em></h1>
+    <p>Capital secured against your future receivables. Repayments flex with your sales — you pay more when business surges and less during slower cycles. Funding as soon as 24 hours.</p>
+    <div style="margin-top:24px;"><a href="/#heroForm" class="btn btn-gold btn-lg">Apply Now →</a></div>
+    <p style="margin-top:12px;font-size:0.88rem;color:rgba(255,255,255,0.6);">Pre-qualification has no impact on your credit profile</p>
+  </div>
+</section>
+
+<section class="content-section">
+  <div class="container">
+    <div class="content-grid">
+      <div class="content-text">
+        <h2>Capital that breathes with your business.</h2>
+        <p>Revenue-based financing delivers an upfront capital infusion in exchange for an agreed-upon share of your daily card receivables. There is no fixed monthly payment, no rigid amortization schedule, and no penalty for seasonal fluctuation. Your remittance rises when revenue climbs and adjusts downward when it contracts.</p>
+        <p>This structure makes it uniquely suited for businesses with strong card-processing volumes — restaurants, retail storefronts, hospitality operators, and service-based enterprises. You receive the capital you need without forcing your cash flow into a calendar it doesn't follow.</p>
+        <ul class="feature-list">
+          <li><span class="check">✓</span> Access from $5,000 to $20 million</li>
+          <li><span class="check">✓</span> Repayment calibrated to daily card receipts</li>
+          <li><span class="check">✓</span> No fixed term or prepayment penalty</li>
+          <li><span class="check">✓</span> Capital deployed in as little as 24 hours</li>
         </ul>
-      </nav>
-      <div class="header-ctas">
-        <a href="/contact/" class="btn btn-outline">Partner Login</a>
-        <a href="/#heroForm" class="btn btn-gold">Apply Now</a>
       </div>
-      <button class="mobile-toggle" id="mobileToggle" aria-label="Menu"><span></span><span></span><span></span></button>
-    </div>
-    <div class="mobile-menu" id="mobileMenu">
-      <span class="nav-link active">Financing Solutions <span class="arrow">▼</span></span>
-      <div class="dropdown">
-        <a href="/product/merchant-cash-advance/" class="dropdown-link">Revenue-Based Financing</a>
-        <a href="/product/line-of-credit/" class="dropdown-link">Business Line of Credit</a>
-        <a href="/product/sba-loans/" class="dropdown-link">SBA Loans</a>
-        <a href="/product/term-loans/" class="dropdown-link">Term Loans</a>
-        <a href="/product/equipment-financing/" class="dropdown-link">Equipment Financing</a>
-        <a href="/product/invoice-factoring/" class="dropdown-link">Invoice Factoring</a>
-        <a href="/product/business-acquisition/" class="dropdown-link">Business Acquisition</a>
-      </div>
-      <a href="/about/" class="nav-link">About</a><a href="/how-it-works/" class="nav-link">How It Works</a><a href="/resources/" class="nav-link">Resources</a><a href="/blog/" class="nav-link">Insights</a>
-      <a href="/contact/" class="nav-link">Partner Login</a><a href="/#heroForm" class="nav-link" style="color:var(--accent);font-weight:700;">Apply Now</a>
-    </div>
-  </header>
-
-  <section class="page-hero">
-    <div class="container">
-      <h1>Revenue-Based <em>Financing</em></h1>
-      <p>Capital secured against your future receivables. Repayments flex with your sales — you pay more when business surges and less during slower cycles. Funding as soon as 24 hours.</p>
-      <div style="margin-top:24px;"><a href="/#heroForm" class="btn btn-gold btn-lg">Apply Now →</a></div>
-      <p style="margin-top:12px;font-size:0.88rem;color:rgba(255,255,255,0.6);">Pre-qualification has no impact on your credit profile</p>
-    </div>
-  </section>
-
-  <section class="content-section">
-    <div class="container">
-      <div class="content-grid">
-        <div class="content-text">
-          <h2>Capital that breathes with your business.</h2>
-          <p>Revenue-based financing delivers an upfront capital infusion in exchange for an agreed-upon share of your daily card receivables. There is no fixed monthly payment, no rigid amortization schedule, and no penalty for seasonal fluctuation. Your remittance rises when revenue climbs and adjusts downward when it contracts.</p>
-          <p>This structure makes it uniquely suited for businesses with strong card-processing volumes — restaurants, retail storefronts, hospitality operators, and service-based enterprises. You receive the capital you need without forcing your cash flow into a calendar it doesn't follow.</p>
-          <ul class="feature-list">
-            <li><span class="check">✓</span> Access from $5,000 to $20 million</li>
-            <li><span class="check">✓</span> Repayment calibrated to daily card receipts</li>
-            <li><span class="check">✓</span> No fixed term or prepayment penalty</li>
-            <li><span class="check">✓</span> Capital deployed in as little as 24 hours</li>
-          </ul>
-        </div>
-        <div class="content-image">
-          <img src="/static/images/mca-business-owner.jpg" alt="Business owner in her retail establishment — warm, professional portrait photography">
-        </div>
+      <div class="content-image">
+        <img src="{% static 'images/mca-business-owner.jpg' %}" alt="Business owner in her retail establishment — warm, professional portrait photography">
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <section class="section section-light">
-    <div class="container">
-      <div class="info-cards">
-        <div class="info-card"><div class="big-number">$5K–$20M</div><div class="big-label">Capital access range</div></div>
-        <div class="info-card"><div class="big-number">24 hrs</div><div class="big-label">Typical funding timeline</div></div>
-        <div class="info-card"><div class="big-number">No fixed term</div><div class="big-label">Structure flexibility</div></div>
-      </div>
+<section class="section section-light">
+  <div class="container">
+    <div class="info-cards">
+      <div class="info-card"><div class="big-number">$5K–$20M</div><div class="big-label">Capital access range</div></div>
+      <div class="info-card"><div class="big-number">24 hrs</div><div class="big-label">Typical funding timeline</div></div>
+      <div class="info-card"><div class="big-number">No fixed term</div><div class="big-label">Structure flexibility</div></div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <section class="section">
-    <div class="container">
-      <h2 class="section-title">What founders use it for.</h2>
-      <p class="section-subtitle">The capital is unrestricted. Clients deploy it wherever the return is highest.</p>
-      <div class="products-grid">
-        <div class="product-card"><div class="product-icon">📦</div><h3>Inventory Build</h3><p>Stock ahead of peak season. Capture bulk-purchase discounts that drop straight to the bottom line.</p></div>
-        <div class="product-card"><div class="product-icon">🔧</div><h3>Equipment &amp; Maintenance</h3><p>Replace or upgrade mission-critical assets before failure forces downtime.</p></div>
-        <div class="product-card"><div class="product-icon">👥</div><h3>Talent Acquisition</h3><p>Hire ahead of the demand curve. Staff for growth before growth staffs you.</p></div>
-        <div class="product-card"><div class="product-icon">📢</div><h3>Market Expansion</h3><p>Fund campaigns, open channels, and enter markets that compound your reach.</p></div>
-        <div class="product-card"><div class="product-icon">🏗️</div><h3>Location Expansion</h3><p>Open additional locations or renovate existing ones without depleting reserves.</p></div>
-        <div class="product-card"><div class="product-icon">💸</div><h3>Bridge Capital</h3><p>Cover the gap between large contract fulfillment and client payment cycles.</p></div>
-      </div>
+<section class="section">
+  <div class="container">
+    <h2 class="section-title">What founders use it for.</h2>
+    <p class="section-subtitle">The capital is unrestricted. Clients deploy it wherever the return is highest.</p>
+    <div class="products-grid">
+      <div class="product-card"><div class="product-icon">📦</div><h3>Inventory Build</h3><p>Stock ahead of peak season. Capture bulk-purchase discounts that drop straight to the bottom line.</p></div>
+      <div class="product-card"><div class="product-icon">🔧</div><h3>Equipment &amp; Maintenance</h3><p>Replace or upgrade mission-critical assets before failure forces downtime.</p></div>
+      <div class="product-card"><div class="product-icon">👥</div><h3>Talent Acquisition</h3><p>Hire ahead of the demand curve. Staff for growth before growth staffs you.</p></div>
+      <div class="product-card"><div class="product-icon">📢</div><h3>Market Expansion</h3><p>Fund campaigns, open channels, and enter markets that compound your reach.</p></div>
+      <div class="product-card"><div class="product-icon">🏗️</div><h3>Location Expansion</h3><p>Open additional locations or renovate existing ones without depleting reserves.</p></div>
+      <div class="product-card"><div class="product-icon">💸</div><h3>Bridge Capital</h3><p>Cover the gap between large contract fulfillment and client payment cycles.</p></div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <section class="section section-light">
-    <div class="container">
-      <h2 class="section-title">The baseline criteria.</h2>
-      <p class="section-subtitle">While our consortium members maintain varied thresholds, these are the typical starting points.</p>
-      <div class="steps-grid">
-        <div class="step-card"><div class="step-number">6+</div><h3>Months operating</h3><p>Most funding sources require at least half a year of demonstrated operating history.</p></div>
-        <div class="step-card"><div class="step-number">$10K</div><h3>Monthly revenue</h3><p>A consistent revenue stream signals the capacity to service the facility comfortably.</p></div>
-        <div class="step-card"><div class="step-number">500+</div><h3>Personal credit</h3><p>We maintain paths for nearly every credit profile — challenged scores do not close doors.</p></div>
-      </div>
+<section class="section section-light">
+  <div class="container">
+    <h2 class="section-title">The baseline criteria.</h2>
+    <p class="section-subtitle">While our consortium members maintain varied thresholds, these are the typical starting points.</p>
+    <div class="steps-grid">
+      <div class="step-card"><div class="step-number">6+</div><h3>Months operating</h3><p>Most funding sources require at least half a year of demonstrated operating history.</p></div>
+      <div class="step-card"><div class="step-number">$10K</div><h3>Monthly revenue</h3><p>A consistent revenue stream signals the capacity to service the facility comfortably.</p></div>
+      <div class="step-card"><div class="step-number">500+</div><h3>Personal credit</h3><p>We maintain paths for nearly every credit profile — challenged scores do not close doors.</p></div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <section class="cta-section">
-    <div class="container">
-      <h2>The capital your business deserves.</h2>
-      <p>Begin the qualification process. No impact to your credit. No obligation to proceed.</p>
-      <a href="/#heroForm" class="btn btn-gold btn-lg">Apply Now →</a>
-    </div>
-  </section>
-
-  <footer class="footer">
-    <div class="container">
-      <div class="footer-grid">
-        <div class="footer-col footer-brand">
-          <a href="/" class="logo" style="color:white;"><span class="logo-icon">A</span> Atlas Fund Capital</a>
-          <p>Capital that moves at the speed of your ambition. A private consortium of institutional capital providers serving American businesses.</p>
-          <address class="address">444 Alaska Avenue Suite #BWM188<br>Torrance, CA 90503</address>
-        </div>
-        <div class="footer-col"><h4>Financing Solutions</h4><ul><li><a href="/product/merchant-cash-advance/">Revenue-Based Financing</a></li><li><a href="/product/line-of-credit/">Business Line of Credit</a></li><li><a href="/product/sba-loans/">SBA Loans</a></li><li><a href="/product/term-loans/">Term Loans</a></li><li><a href="/product/equipment-financing/">Equipment Financing</a></li><li><a href="/product/invoice-factoring/">Invoice Factoring</a></li><li><a href="/product/business-acquisition/">Business Acquisition</a></li></ul></div>
-        <div class="footer-col"><h4>Company</h4><ul><li><a href="/about/">About Us</a></li><li><a href="/how-it-works/">How It Works</a></li><li><a href="/blog/">Insights</a></li><li><a href="/faqs/">FAQs</a></li><li><a href="/contact/">Contact</a></li></ul></div>
-        <div class="footer-col"><h4>Resources</h4><ul><li><a href="/resources/">Resource Center</a></li><li><a href="/faqs/">FAQ Library</a></li><li><a href="/blog/">Capital Insights</a></li><li><a href="/contact/">Partner Portal</a></li></ul></div>
-        <div class="footer-col"><h4>Support</h4><ul><li><a href="/contact/">Contact Us</a></li><li><a href="/faqs/">FAQ</a></li><li><a href="/#heroForm">Apply Now</a></li></ul></div>
-      </div>
-      <div class="footer-bottom"><span>&copy; 2026 Atlas Fund Capital. All rights reserved.</span><div class="footer-bottom-links"><a href="/terms/">Terms of Use</a><a href="#">Privacy Policy</a><a href="#">Cookie Policy</a></div></div>
-    </div>
-  </footer>
-  <script src="/static/js/main.js"></script>
-</body>
-</html>
+<section class="cta-section">
+  <div class="container">
+    <h2>The capital your business deserves.</h2>
+    <p>Begin the qualification process. No impact to your credit. No obligation to proceed.</p>
+    <a href="/#heroForm" class="btn btn-gold btn-lg">Apply Now →</a>
+  </div>
+</section>
+{% endblock %}

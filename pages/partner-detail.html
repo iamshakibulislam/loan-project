@@ -1,57 +1,48 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Become an Atlas Fund Capital partner. Earn $100 per qualified lead. Get paid weekly via ACH.">
-  <title>Partner Program | Atlas Fund Capital</title>
-  <link href="/https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/style.css">
-</head>
-<body>
-  <header class="header"><div class="container header-inner"><a href="/" class="logo"><span class="logo-icon">A</span> Atlas Fund Capital</a><nav class="nav"><ul class="nav-list"><li class="nav-item"><span class="nav-link">Financing Solutions <span class="arrow">▼</span></span><div class="dropdown"><a href="/product/merchant-cash-advance/" class="dropdown-link">Revenue-Based Financing</a><a href="/product/line-of-credit/" class="dropdown-link">Business Line of Credit</a><a href="/product/sba-loans/" class="dropdown-link">SBA Loans</a><a href="/product/term-loans/" class="dropdown-link">Term Loans</a><a href="/product/equipment-financing/" class="dropdown-link">Equipment Financing</a><a href="/product/invoice-factoring/" class="dropdown-link">Invoice Factoring</a><a href="/product/business-acquisition/" class="dropdown-link">Business Acquisition</a></div></li><li class="nav-item"><a href="/about/" class="nav-link">About</a></li><li class="nav-item"><a href="/how-it-works/" class="nav-link">How It Works</a></li><li class="nav-item"><a href="/resources/" class="nav-link">Resources</a></li><li class="nav-item"><a href="/blog/" class="nav-link">Insights</a></li></ul></nav><div class="header-ctas"><a href="/partner/login/" class="btn btn-outline">Partner Login</a><a href="/#heroForm" class="btn btn-gold">Apply Now</a></div></div></header>
+{% extends "base.html" %}
+{% load static %}
 
-  <section class="page-hero"><div class="container"><h1>Partner <em>Program</em></h1><p>Earn $100 for every qualified business lead. Share your unique link. Get paid weekly.</p><div style="margin-top:24px;"><a href="/partner/signup/" class="btn btn-gold btn-lg">Become a Partner →</a></div></div></section>
+{% block meta %}<meta name="description" content="Become an Atlas Fund Capital partner. Earn $100 per qualified lead. Get paid weekly via ACH.">{% endblock %}
 
-  <section class="content-section"><div class="container">
-    <div class="content-grid">
-      <div class="content-text">
-        <h2>How the partner program works.</h2>
-        <p>You refer businesses to Atlas Fund Capital using your unique partner link. When someone submits a lead through your link — and that business is earning over $25,000 per month, has been operating for at least one year, and has a credit score of 500 or above — you earn $100. No caps. No quotas. No waiting for the deal to close.</p>
-        <p>For partners who prefer a larger upside, we also offer a pay-per-close model: 2% of the total deal size when a business you introduced closes a financing facility. Submit deals directly from your partner dashboard — our team handles the rest.</p>
-      </div>
-      <div class="content-image"><img src="/images/about-mission.jpg" alt="Partner collaboration — professional business setting"></div>
+{% block title %}Partner Program | Atlas Fund Capital{% endblock %}
+
+{% block content %}
+<section class="page-hero"><div class="container"><h1>Partner <em>Program</em></h1><p>Earn $100 for every qualified business lead. Share your unique link. Get paid weekly.</p><div style="margin-top:24px;"><a href="/partner/signup/" class="btn btn-gold btn-lg">Become a Partner →</a></div></div></section>
+
+<section class="content-section"><div class="container">
+  <div class="content-grid">
+    <div class="content-text">
+      <h2>How the partner program works.</h2>
+      <p>You refer businesses to Atlas Fund Capital using your unique partner link. When someone submits a lead through your link — and that business is earning over $25,000 per month, has been operating for at least one year, and has a credit score of 500 or above — you earn $100. No caps. No quotas. No waiting for the deal to close.</p>
+      <p>For partners who prefer a larger upside, we also offer a pay-per-close model: 2% of the total deal size when a business you introduced closes a financing facility. Submit deals directly from your partner dashboard — our team handles the rest.</p>
     </div>
-  </div></section>
+    <div class="content-image"><img src="{% static 'images/about-mission.jpg' %}" alt="Partner collaboration — professional business setting"></div>
+  </div>
+</div></section>
 
-  <section class="section section-light"><div class="container">
-    <div class="steps-grid">
-      <div class="step-card"><div class="step-number">1</div><h3>Sign Up</h3><p>Create your free partner account in under one minute. No approval process — start immediately.</p></div>
-      <div class="step-card"><div class="step-number">2</div><h3>Share Your Link</h3><p>Receive a unique referral link. Share it anywhere — email, social media, your website. 40-day cookie tracking.</p></div>
-      <div class="step-card"><div class="step-number">3</div><h3>Get Paid Weekly</h3><p>Every qualified lead adds $100 to your wallet. Request payout when your balance exceeds $500. Paid via ACH every Friday.</p></div>
+<section class="section section-light"><div class="container">
+  <div class="steps-grid">
+    <div class="step-card"><div class="step-number">1</div><h3>Sign Up</h3><p>Create your free partner account in under one minute. No approval process — start immediately.</p></div>
+    <div class="step-card"><div class="step-number">2</div><h3>Share Your Link</h3><p>Receive a unique referral link. Share it anywhere — email, social media, your website. 40-day cookie tracking.</p></div>
+    <div class="step-card"><div class="step-number">3</div><h3>Get Paid Weekly</h3><p>Every qualified lead adds $100 to your wallet. Request payout when your balance exceeds $500. Paid via ACH every Friday.</p></div>
+  </div>
+</div></section>
+
+<section class="section"><div class="container">
+  <h2 class="section-title">Two ways to earn.</h2>
+  <p class="section-subtitle">Choose the model that fits how you work with your clients.</p>
+  <div class="testimonials-grid">
+    <div class="testimonial-card" style="text-align:center;">
+      <h3 style="font-size:2rem;color:var(--accent);">$100</h3>
+      <p style="font-size:1rem;font-weight:600;">Pay Per Lead</p>
+      <p style="color:var(--text-light);">Our default model. You send us qualified businesses — we pay you $100 for each one. Simple. Predictable. No waiting for deals to close.</p>
     </div>
-  </div></section>
-
-  <section class="section"><div class="container">
-    <h2 class="section-title">Two ways to earn.</h2>
-    <p class="section-subtitle">Choose the model that fits how you work with your clients.</p>
-    <div class="testimonials-grid">
-      <div class="testimonial-card" style="text-align:center;">
-        <h3 style="font-size:2rem;color:var(--accent);">$100</h3>
-        <p style="font-size:1rem;font-weight:600;">Pay Per Lead</p>
-        <p style="color:var(--text-light);">Our default model. You send us qualified businesses — we pay you $100 for each one. Simple. Predictable. No waiting for deals to close.</p>
-      </div>
-      <div class="testimonial-card" style="text-align:center;">
-        <h3 style="font-size:2rem;color:var(--accent);">2%</h3>
-        <p style="font-size:1rem;font-weight:600;">Pay Per Close</p>
-        <p style="color:var(--text-light);">For partners who personally bring us the deal. Submit it through your dashboard. If it funds, you earn 2% of the total facility size.</p>
-      </div>
+    <div class="testimonial-card" style="text-align:center;">
+      <h3 style="font-size:2rem;color:var(--accent);">2%</h3>
+      <p style="font-size:1rem;font-weight:600;">Pay Per Close</p>
+      <p style="color:var(--text-light);">For partners who personally bring us the deal. Submit it through your dashboard. If it funds, you earn 2% of the total facility size.</p>
     </div>
-  </div></section>
+  </div>
+</div></section>
 
-  <section class="cta-section"><div class="container"><h2>Ready to start earning?</h2><p>Sign up takes less than a minute. Start sharing your link today.</p><a href="/partner/signup/" class="btn btn-gold btn-lg">Create Partner Account</a></div></section>
-
-  <footer class="footer"><div class="container"><div class="footer-grid"><div class="footer-col footer-brand"><a href="/" class="logo" style="color:white;"><span class="logo-icon">A</span> Atlas Fund Capital</a><p>Capital that moves at the speed of your ambition. A private consortium of institutional capital providers serving American businesses.</p><address class="address">444 Alaska Avenue Suite #BWM188<br>Torrance, CA 90503</address></div><div class="footer-col"><h4>Financing Solutions</h4><ul><li><a href="/product/merchant-cash-advance/">Revenue-Based Financing</a></li><li><a href="/product/line-of-credit/">Business Line of Credit</a></li><li><a href="/product/sba-loans/">SBA Loans</a></li><li><a href="/product/term-loans/">Term Loans</a></li><li><a href="/product/equipment-financing/">Equipment Financing</a></li><li><a href="/product/invoice-factoring/">Invoice Factoring</a></li><li><a href="/product/business-acquisition/">Business Acquisition</a></li></ul></div><div class="footer-col"><h4>Company</h4><ul><li><a href="/about/">About Us</a></li><li><a href="/how-it-works/">How It Works</a></li><li><a href="/blog/">Insights</a></li><li><a href="/faqs/">FAQs</a></li><li><a href="/contact/">Contact</a></li></ul></div><div class="footer-col"><h4>Resources</h4><ul><li><a href="/resources/">Resource Center</a></li><li><a href="/faqs/">FAQ Library</a></li><li><a href="/blog/">Capital Insights</a></li><li><a href="/partners/">Partner Program</a></li></ul></div><div class="footer-col"><h4>Support</h4><ul><li><a href="/contact/">Contact Us</a></li><li><a href="/faqs/">FAQ</a></li><li><a href="/#heroForm">Apply Now</a></li></ul></div></div><div class="footer-bottom"><span>&copy; 2026 Atlas Fund Capital. All rights reserved.</span><div class="footer-bottom-links"><a href="/terms/">Terms of Use</a><a href="#">Privacy Policy</a><a href="#">Cookie Policy</a></div></div></div></footer>
-  <script src="/js/main.js"></script>
-</body>
-</html>
+<section class="cta-section"><div class="container"><h2>Ready to start earning?</h2><p>Sign up takes less than a minute. Start sharing your link today.</p><a href="/partner/signup/" class="btn btn-gold btn-lg">Create Partner Account</a></div></section>
+{% endblock %}

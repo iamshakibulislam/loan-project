@@ -1,112 +1,79 @@
+{% extends "base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="{% if post.excerpt %}{{ post.excerpt|truncatewords:30 }}{% else %}{{ post.title }}{% endif %}">
-  <title>{{ post.title }} — Atlas Fund Capital Insights</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{% static 'css/style.css' %}">
-</head>
-<body>
-  <header class="header">
-    <div class="container header-inner">
-      <a href="/" class="logo"><span class="logo-icon">A</span> Atlas Fund Capital</a>
-      <nav class="nav">
-        <ul class="nav-list">
-          <li class="nav-item"><span class="nav-link">Financing Solutions <span class="arrow">&#9660;</span></span><div class="dropdown"><a href="/product/merchant-cash-advance/" class="dropdown-link">Revenue-Based Financing</a><a href="/product/line-of-credit/" class="dropdown-link">Business Line of Credit</a><a href="/product/sba-loans/" class="dropdown-link">SBA Loans</a><a href="/product/term-loans/" class="dropdown-link">Term Loans</a><a href="/product/equipment-financing/" class="dropdown-link">Equipment Financing</a><a href="/product/invoice-factoring/" class="dropdown-link">Invoice Factoring</a><a href="/product/business-acquisition/" class="dropdown-link">Business Acquisition</a></div></li>
-          <li class="nav-item"><a href="/about/" class="nav-link">About</a></li>
-          <li class="nav-item"><a href="/how-it-works/" class="nav-link">How It Works</a></li>
-          <li class="nav-item"><a href="/resources/" class="nav-link">Resources</a></li>
-          <li class="nav-item"><a href="/blog/" class="nav-link active">Insights</a></li>
-        </ul>
-      </nav>
-      <div class="header-ctas"><a href="/contact/" class="btn btn-outline">Partner Login</a><a href="/#heroForm" class="btn btn-gold">Apply Now</a></div>
-      <button class="mobile-toggle" id="mobileToggle" aria-label="Menu"><span></span><span></span><span></span></button>
+
+{% block meta %}<meta name="description" content="{% if post.excerpt %}{{ post.excerpt|truncatewords:30 }}{% else %}{{ post.title }}{% endif %}">{% endblock %}
+
+{% block title %}{{ post.title }} — Atlas Fund Capital Insights{% endblock %}
+
+{% block extra_head %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<article class="blog-post-wrapper">
+  <header class="blog-post-header">
+    <div class="blog-post-header-inner">
+      <a href="/blog/" class="blog-back-link">&larr; All Insights</a>
+      <span class="blog-post-category">{{ post.get_category_display }}</span>
+      <h1 class="blog-post-title">{{ post.title }}</h1>
+      {% if post.subtitle %}
+      <p class="blog-post-subtitle">{{ post.subtitle }}</p>
+      {% endif %}
+      <div class="blog-post-byline">
+        {% if post.author %}<span>By {{ post.author.get_full_name }}</span><span class="byline-dot">&middot;</span>{% endif %}
+        <span>{{ post.published_at|date:"F j, Y" }}</span>
+        <span class="byline-dot">&middot;</span>
+        <span>{{ post.read_time }} min read</span>
+      </div>
     </div>
-    <div class="mobile-menu" id="mobileMenu"><span class="nav-link">Financing Solutions <span class="arrow">&#9660;</span></span><div class="dropdown"><a href="/product/merchant-cash-advance/" class="dropdown-link">Revenue-Based Financing</a><a href="/product/line-of-credit/" class="dropdown-link">Business Line of Credit</a><a href="/product/sba-loans/" class="dropdown-link">SBA Loans</a><a href="/product/term-loans/" class="dropdown-link">Term Loans</a><a href="/product/equipment-financing/" class="dropdown-link">Equipment Financing</a><a href="/product/invoice-factoring/" class="dropdown-link">Invoice Factoring</a><a href="/product/business-acquisition/" class="dropdown-link">Business Acquisition</a></div><a href="/about/" class="nav-link">About</a><a href="/how-it-works/" class="nav-link">How It Works</a><a href="/resources/" class="nav-link">Resources</a><a href="/blog/" class="nav-link active">Insights</a><a href="/contact/" class="nav-link">Partner Login</a><a href="/#heroForm" class="nav-link" style="color:var(--accent);font-weight:700;">Apply Now</a></div>
   </header>
 
-  <article class="blog-post-wrapper">
-    <header class="blog-post-header">
-      <div class="blog-post-header-inner">
-        <a href="/blog/" class="blog-back-link">&larr; All Insights</a>
-        <span class="blog-post-category">{{ post.get_category_display }}</span>
-        <h1 class="blog-post-title">{{ post.title }}</h1>
-        {% if post.subtitle %}
-        <p class="blog-post-subtitle">{{ post.subtitle }}</p>
-        {% endif %}
-        <div class="blog-post-byline">
-          {% if post.author %}<span>By {{ post.author.get_full_name }}</span><span class="byline-dot">&middot;</span>{% endif %}
-          <span>{{ post.published_at|date:"F j, Y" }}</span>
-          <span class="byline-dot">&middot;</span>
-          <span>{{ post.read_time }} min read</span>
+  {% if post.featured_image %}
+  <div class="blog-post-featured-image">
+    <img src="{{ post.featured_image.url }}" alt="{{ post.title }}">
+  </div>
+  {% endif %}
+
+  <div class="blog-post-body-wrap">
+    <div class="blog-post-body">
+      {{ post.content|safe }}
+    </div>
+
+    <div class="blog-post-footer-meta">
+      <div class="blog-post-share">
+        <span>Share this article</span>
+        <div class="share-links">
+          <a href="https://twitter.com/intent/tweet?text={{ post.title|urlencode }}&url={{ request.build_absolute_uri }}" target="_blank" rel="noopener" class="share-link">Twitter</a>
+          <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ request.build_absolute_uri }}" target="_blank" rel="noopener" class="share-link">LinkedIn</a>
+          <a href="mailto:?subject={{ post.title|urlencode }}&body={{ request.build_absolute_uri }}" class="share-link">Email</a>
         </div>
       </div>
-    </header>
-
-    {% if post.featured_image %}
-    <div class="blog-post-featured-image">
-      <img src="{{ post.featured_image.url }}" alt="{{ post.title }}">
     </div>
+
+    {% if recent_posts %}
+    <aside class="blog-post-related">
+      <h2 class="related-heading">Continue Reading</h2>
+      <div class="related-grid">
+        {% for rp in recent_posts|slice:":3" %}
+        <a href="{% url 'blog_post_detail' slug=rp.slug %}" class="related-card">
+          <span class="related-card-category">{{ rp.get_category_display }}</span>
+          <h3 class="related-card-title">{{ rp.title }}</h3>
+          <span class="related-card-meta">{{ rp.published_at|date:"M j, Y" }} &middot; {{ rp.read_time }} min</span>
+        </a>
+        {% endfor %}
+      </div>
+    </aside>
     {% endif %}
+  </div>
+</article>
 
-    <div class="blog-post-body-wrap">
-      <div class="blog-post-body">
-        {{ post.content|safe }}
-      </div>
-
-      <div class="blog-post-footer-meta">
-        <div class="blog-post-share">
-          <span>Share this article</span>
-          <div class="share-links">
-            <a href="https://twitter.com/intent/tweet?text={{ post.title|urlencode }}&url={{ request.build_absolute_uri }}" target="_blank" rel="noopener" class="share-link">Twitter</a>
-            <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ request.build_absolute_uri }}" target="_blank" rel="noopener" class="share-link">LinkedIn</a>
-            <a href="mailto:?subject={{ post.title|urlencode }}&body={{ request.build_absolute_uri }}" class="share-link">Email</a>
-          </div>
-        </div>
-      </div>
-
-      {% if recent_posts %}
-      <aside class="blog-post-related">
-        <h2 class="related-heading">Continue Reading</h2>
-        <div class="related-grid">
-          {% for rp in recent_posts|slice:":3" %}
-          <a href="{% url 'blog_post_detail' slug=rp.slug %}" class="related-card">
-            <span class="related-card-category">{{ rp.get_category_display }}</span>
-            <h3 class="related-card-title">{{ rp.title }}</h3>
-            <span class="related-card-meta">{{ rp.published_at|date:"M j, Y" }} &middot; {{ rp.read_time }} min</span>
-          </a>
-          {% endfor %}
-        </div>
-      </aside>
-      {% endif %}
-    </div>
-  </article>
-
-  <section class="section section-light blog-post-cta-section">
-    <div class="container" style="text-align:center;">
-      <h2 class="section-title">Ready to put these insights to work?</h2>
-      <p class="section-subtitle">Explore funding up to $20 million. No credit impact. Decisions in as little as 24 hours.</p>
-      <a href="/#heroForm" class="btn btn-gold btn-lg" style="margin-top:16px;">Apply Now</a>
-    </div>
-  </section>
-
-  <footer class="footer">
-    <div class="container">
-      <div class="footer-grid">
-        <div class="footer-col footer-brand"><a href="/" class="logo" style="color:white;"><span class="logo-icon">A</span> Atlas Fund Capital</a><p>Capital that moves at the speed of your ambition. A private consortium of institutional capital providers serving American businesses.</p><address class="address">444 Alaska Avenue Suite #BWM188<br>Torrance, CA 90503</address></div>
-        <div class="footer-col"><h4>Financing Solutions</h4><ul><li><a href="/product/merchant-cash-advance/">Revenue-Based Financing</a></li><li><a href="/product/line-of-credit/">Business Line of Credit</a></li><li><a href="/product/sba-loans/">SBA Loans</a></li><li><a href="/product/term-loans/">Term Loans</a></li><li><a href="/product/equipment-financing/">Equipment Financing</a></li><li><a href="/product/invoice-factoring/">Invoice Factoring</a></li><li><a href="/product/business-acquisition/">Business Acquisition</a></li></ul></div>
-        <div class="footer-col"><h4>Company</h4><ul><li><a href="/about/">About Us</a></li><li><a href="/how-it-works/">How It Works</a></li><li><a href="/blog/">Insights</a></li><li><a href="/faqs/">FAQs</a></li><li><a href="/contact/">Contact</a></li></ul></div>
-        <div class="footer-col"><h4>Resources</h4><ul><li><a href="/resources/">Resource Center</a></li><li><a href="/faqs/">FAQ Library</a></li><li><a href="/blog/">Capital Insights</a></li><li><a href="/contact/">Partner Portal</a></li></ul></div>
-        <div class="footer-col"><h4>Support</h4><ul><li><a href="/contact/">Contact Us</a></li><li><a href="/faqs/">FAQ</a></li><li><a href="/#heroForm">Apply Now</a></li></ul></div>
-      </div>
-      <div class="footer-bottom"><span>&copy; 2026 Atlas Fund Capital. All rights reserved.</span><div class="footer-bottom-links"><a href="/terms/">Terms of Use</a><a href="#">Privacy Policy</a><a href="#">Cookie Policy</a></div></div>
-    </div>
-  </footer>
-  <script src="{% static 'js/main.js' %}"></script>
-</body>
-</html>
+<section class="section section-light blog-post-cta-section">
+  <div class="container" style="text-align:center;">
+    <h2 class="section-title">Ready to put these insights to work?</h2>
+    <p class="section-subtitle">Explore funding up to $20 million. No credit impact. Decisions in as little as 24 hours.</p>
+    <a href="/#heroForm" class="btn btn-gold btn-lg" style="margin-top:16px;">Apply Now</a>
+  </div>
+</section>
+{% endblock %}

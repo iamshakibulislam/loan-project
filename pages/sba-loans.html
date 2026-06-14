@@ -1,162 +1,107 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="SBA Loans — Government-backed financing with the most competitive terms in the market. Extended maturities and below-prime rates for qualified enterprises.">
-  <title>SBA Loans | Atlas Fund Capital</title>
-  <link href="/https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/css/style.css">
-</head>
-<body>
-  <header class="header">
-    <div class="container header-inner">
-      <a href="/" class="logo"><span class="logo-icon">A</span> Atlas Fund Capital</a>
-      <nav class="nav">
-        <ul class="nav-list">
-          <li class="nav-item">
-            <span class="nav-link active">Financing Solutions <span class="arrow">▼</span></span>
-            <div class="dropdown">
-              <a href="/product/merchant-cash-advance/" class="dropdown-link">Revenue-Based Financing</a>
-              <a href="/product/line-of-credit/" class="dropdown-link">Business Line of Credit</a>
-              <a href="/product/sba-loans/" class="dropdown-link">SBA Loans</a>
-              <a href="/product/term-loans/" class="dropdown-link">Term Loans</a>
-              <a href="/product/equipment-financing/" class="dropdown-link">Equipment Financing</a>
-              <a href="/product/invoice-factoring/" class="dropdown-link">Invoice Factoring</a>
-              <a href="/product/business-acquisition/" class="dropdown-link">Business Acquisition</a>
-            </div>
-          </li>
-          <li class="nav-item"><a href="/about/" class="nav-link">About</a></li>
-          <li class="nav-item"><a href="/how-it-works/" class="nav-link">How It Works</a></li>
-          <li class="nav-item"><a href="/resources/" class="nav-link">Resources</a></li>
-          <li class="nav-item"><a href="/blog/" class="nav-link">Insights</a></li>
+{% extends "base.html" %}
+{% load static %}
+
+{% block meta %}<meta name="description" content="SBA Loans — Government-backed financing with the most competitive terms in the market. Extended maturities and below-prime rates for qualified enterprises.">{% endblock %}
+
+{% block title %}SBA Loans | Atlas Fund Capital{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <h1>SBA <em>Loans</em></h1>
+    <p>Government-backed financing with the most competitive terms in the market. Extended maturities, below-prime rates, and the full weight of the U.S. Small Business Administration behind your facility.</p>
+    <div style="margin-top:24px;"><a href="/#heroForm" class="btn btn-gold btn-lg">Apply Now →</a></div>
+    <p style="margin-top:12px;font-size:0.88rem;color:rgba(255,255,255,0.6);">Guaranteed by the U.S. Small Business Administration</p>
+  </div>
+</section>
+
+<section class="content-section">
+  <div class="container">
+    <div class="content-grid">
+      <div class="content-text">
+        <h2>Patient capital. Institutional terms.</h2>
+        <p>SBA loans carry a partial federal guarantee that reduces the lending institution's exposure, enabling them to extend terms that simply aren't available in the conventional market. Rates that begin in the mid-single digits. Maturities measured in decades, not months. Amortization schedules that respect the long arc of business growth.</p>
+        <p>These facilities are purpose-built for enterprises with established track records that are pursuing substantial, multi-year initiatives — facility acquisition, large-scale equipment deployment, strategic refinancing of legacy debt, or the purchase of another operating business.</p>
+        <ul class="feature-list">
+          <li><span class="check">✓</span> Up to $5 million through the 7(a) program</li>
+          <li><span class="check">✓</span> Rates starting from 6.5% — often well below conventional alternatives</li>
+          <li><span class="check">✓</span> Terms extending to a full 25 years</li>
+          <li><span class="check">✓</span> Multiple program structures for different use cases</li>
         </ul>
-      </nav>
-      <div class="header-ctas">
-        <a href="/contact/" class="btn btn-outline">Partner Login</a>
-        <a href="/#heroForm" class="btn btn-gold">Apply Now</a>
       </div>
-      <button class="mobile-toggle" id="mobileToggle" aria-label="Menu"><span></span><span></span><span></span></button>
-    </div>
-    <div class="mobile-menu" id="mobileMenu">
-      <span class="nav-link active">Financing Solutions <span class="arrow">▼</span></span>
-      <div class="dropdown"><a href="/product/merchant-cash-advance/" class="dropdown-link">Revenue-Based Financing</a><a href="/product/line-of-credit/" class="dropdown-link">Business Line of Credit</a><a href="/product/sba-loans/" class="dropdown-link">SBA Loans</a><a href="/product/term-loans/" class="dropdown-link">Term Loans</a><a href="/product/equipment-financing/" class="dropdown-link">Equipment Financing</a><a href="/product/invoice-factoring/" class="dropdown-link">Invoice Factoring</a><a href="/product/business-acquisition/" class="dropdown-link">Business Acquisition</a></div>
-      <a href="/about/" class="nav-link">About</a><a href="/how-it-works/" class="nav-link">How It Works</a><a href="/resources/" class="nav-link">Resources</a><a href="/blog/" class="nav-link">Insights</a>
-      <a href="/contact/" class="nav-link">Partner Login</a><a href="/#heroForm" class="nav-link" style="color:var(--accent);font-weight:700;">Apply Now</a>
-    </div>
-  </header>
-
-  <section class="page-hero">
-    <div class="container">
-      <h1>SBA <em>Loans</em></h1>
-      <p>Government-backed financing with the most competitive terms in the market. Extended maturities, below-prime rates, and the full weight of the U.S. Small Business Administration behind your facility.</p>
-      <div style="margin-top:24px;"><a href="/#heroForm" class="btn btn-gold btn-lg">Apply Now →</a></div>
-      <p style="margin-top:12px;font-size:0.88rem;color:rgba(255,255,255,0.6);">Guaranteed by the U.S. Small Business Administration</p>
-    </div>
-  </section>
-
-  <section class="content-section">
-    <div class="container">
-      <div class="content-grid">
-        <div class="content-text">
-          <h2>Patient capital. Institutional terms.</h2>
-          <p>SBA loans carry a partial federal guarantee that reduces the lending institution's exposure, enabling them to extend terms that simply aren't available in the conventional market. Rates that begin in the mid-single digits. Maturities measured in decades, not months. Amortization schedules that respect the long arc of business growth.</p>
-          <p>These facilities are purpose-built for enterprises with established track records that are pursuing substantial, multi-year initiatives — facility acquisition, large-scale equipment deployment, strategic refinancing of legacy debt, or the purchase of another operating business.</p>
-          <ul class="feature-list">
-            <li><span class="check">✓</span> Up to $5 million through the 7(a) program</li>
-            <li><span class="check">✓</span> Rates starting from 6.5% — often well below conventional alternatives</li>
-            <li><span class="check">✓</span> Terms extending to a full 25 years</li>
-            <li><span class="check">✓</span> Multiple program structures for different use cases</li>
-          </ul>
-        </div>
-        <div class="content-image">
-          <img src="/static/images/sba-business-owner.jpg" alt="Established business professional in a workshop environment — craftsmanship and expertise">
-        </div>
+      <div class="content-image">
+        <img src="{% static 'images/sba-business-owner.jpg' %}" alt="Established business professional in a workshop environment — craftsmanship and expertise">
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <section class="section section-light">
-    <div class="container">
-      <h2 class="section-title">Three SBA programs. One objective.</h2>
-      <p class="section-subtitle">Each structure is optimized for a specific use case. We'll help determine which fits.</p>
-      <div class="loan-type-cards">
-        <div class="loan-type-card">
-          <span class="tag tag-popular">Most Requested</span>
-          <h3>SBA 7(a) Loans</h3>
-          <p>The flagship program. Broad-use capital for working capital, equipment, real estate, acquisition, or refinancing.</p>
-          <div class="meta">Up to $5M · 10–25 years</div>
-          <a href="/#heroForm" class="btn btn-gold">Apply Now →</a>
-        </div>
-        <div class="loan-type-card">
-          <span class="tag tag-realestate">Fixed Assets</span>
-          <h3>SBA 504 Loans</h3>
-          <p>Purpose-built for major fixed asset purchases — commercial real estate, heavy machinery, large-scale equipment.</p>
-          <div class="meta">Up to $5.5M · 10–25 years</div>
-          <a href="/#heroForm" class="btn btn-gold">Apply Now →</a>
-        </div>
-        <div class="loan-type-card">
-          <span class="tag tag-small">Smaller Scale</span>
-          <h3>SBA Microloans</h3>
-          <p>Modest facilities for early-stage enterprises and businesses that need targeted, smaller-scale infusions.</p>
-          <div class="meta">Up to $50K · Up to 6 years</div>
-          <a href="/#heroForm" class="btn btn-gold">Apply Now →</a>
-        </div>
+<section class="section section-light">
+  <div class="container">
+    <h2 class="section-title">Three SBA programs. One objective.</h2>
+    <p class="section-subtitle">Each structure is optimized for a specific use case. We'll help determine which fits.</p>
+    <div class="loan-type-cards">
+      <div class="loan-type-card">
+        <span class="tag tag-popular">Most Requested</span>
+        <h3>SBA 7(a) Loans</h3>
+        <p>The flagship program. Broad-use capital for working capital, equipment, real estate, acquisition, or refinancing.</p>
+        <div class="meta">Up to $5M · 10–25 years</div>
+        <a href="/#heroForm" class="btn btn-gold">Apply Now →</a>
+      </div>
+      <div class="loan-type-card">
+        <span class="tag tag-realestate">Fixed Assets</span>
+        <h3>SBA 504 Loans</h3>
+        <p>Purpose-built for major fixed asset purchases — commercial real estate, heavy machinery, large-scale equipment.</p>
+        <div class="meta">Up to $5.5M · 10–25 years</div>
+        <a href="/#heroForm" class="btn btn-gold">Apply Now →</a>
+      </div>
+      <div class="loan-type-card">
+        <span class="tag tag-small">Smaller Scale</span>
+        <h3>SBA Microloans</h3>
+        <p>Modest facilities for early-stage enterprises and businesses that need targeted, smaller-scale infusions.</p>
+        <div class="meta">Up to $50K · Up to 6 years</div>
+        <a href="/#heroForm" class="btn btn-gold">Apply Now →</a>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <section class="section">
-    <div class="container">
-      <div class="info-cards">
-        <div class="info-card"><div class="big-number">Up to $5M</div><div class="big-label">Maximum facility size</div></div>
-        <div class="info-card"><div class="big-number">10–25 yrs</div><div class="big-label">Repayment horizon</div></div>
-        <div class="info-card"><div class="big-number">Prime + 2.75%</div><div class="big-label">Rate structure ceiling</div></div>
+<section class="section">
+  <div class="container">
+    <div class="info-cards">
+      <div class="info-card"><div class="big-number">Up to $5M</div><div class="big-label">Maximum facility size</div></div>
+      <div class="info-card"><div class="big-number">10–25 yrs</div><div class="big-label">Repayment horizon</div></div>
+      <div class="info-card"><div class="big-number">Prime + 2.75%</div><div class="big-label">Rate structure ceiling</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-light">
+  <div class="container">
+    <div class="content-grid">
+      <div class="content-text">
+        <h2>Is an SBA facility the right instrument?</h2>
+        <p>SBA programs deliver the best long-term economics available, but the underwriting process is more deliberate than revenue-based or line-of-credit alternatives. The trade-off — patience for price — is often worth it for well-capitalized businesses pursuing initiatives measured in years, not quarters.</p>
+        <ul class="feature-list">
+          <li><span class="check">✓</span> Two or more years of operating history with documented financials</li>
+          <li><span class="check">✓</span> Personal credit above 680 — though exceptions exist</li>
+          <li><span class="check">✓</span> Consistent profitability and cash flow coverage</li>
+          <li><span class="check">✓</span> Planning a major capital deployment — expansion, acquisition, or refinance</li>
+          <li><span class="check">✓</span> Seeking the lowest possible cost of capital over a long horizon</li>
+        </ul>
+      </div>
+      <div class="content-image">
+        <img src="{% static 'images/sba-consultation.jpg' %}" alt="Professional consultation meeting — financial advisory session in a modern office">
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <section class="section section-light">
-    <div class="container">
-      <div class="content-grid">
-        <div class="content-text">
-          <h2>Is an SBA facility the right instrument?</h2>
-          <p>SBA programs deliver the best long-term economics available, but the underwriting process is more deliberate than revenue-based or line-of-credit alternatives. The trade-off — patience for price — is often worth it for well-capitalized businesses pursuing initiatives measured in years, not quarters.</p>
-          <ul class="feature-list">
-            <li><span class="check">✓</span> Two or more years of operating history with documented financials</li>
-            <li><span class="check">✓</span> Personal credit above 680 — though exceptions exist</li>
-            <li><span class="check">✓</span> Consistent profitability and cash flow coverage</li>
-            <li><span class="check">✓</span> Planning a major capital deployment — expansion, acquisition, or refinance</li>
-            <li><span class="check">✓</span> Seeking the lowest possible cost of capital over a long horizon</li>
-          </ul>
-        </div>
-        <div class="content-image">
-          <img src="/static/images/sba-consultation.jpg" alt="Professional consultation meeting — financial advisory session in a modern office">
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="cta-section">
-    <div class="container">
-      <h2>Explore your SBA eligibility.</h2>
-      <p>Begin the qualification process. Our advisors will map the path forward.</p>
-      <a href="/#heroForm" class="btn btn-gold btn-lg">Apply Now →</a>
-    </div>
-  </section>
-
-  <footer class="footer">
-    <div class="container">
-      <div class="footer-grid">
-        <div class="footer-col footer-brand"><a href="/" class="logo" style="color:white;"><span class="logo-icon">A</span> Atlas Fund Capital</a><p>Capital that moves at the speed of your ambition. A private consortium of institutional capital providers serving American businesses.</p><address class="address">444 Alaska Avenue Suite #BWM188<br>Torrance, CA 90503</address></div>
-        <div class="footer-col"><h4>Financing Solutions</h4><ul><li><a href="/product/merchant-cash-advance/">Revenue-Based Financing</a></li><li><a href="/product/line-of-credit/">Business Line of Credit</a></li><li><a href="/product/sba-loans/">SBA Loans</a></li><li><a href="/product/term-loans/">Term Loans</a></li><li><a href="/product/equipment-financing/">Equipment Financing</a></li><li><a href="/product/invoice-factoring/">Invoice Factoring</a></li><li><a href="/product/business-acquisition/">Business Acquisition</a></li></ul></div>
-        <div class="footer-col"><h4>Company</h4><ul><li><a href="/about/">About Us</a></li><li><a href="/how-it-works/">How It Works</a></li><li><a href="/blog/">Insights</a></li><li><a href="/faqs/">FAQs</a></li><li><a href="/contact/">Contact</a></li></ul></div>
-        <div class="footer-col"><h4>Resources</h4><ul><li><a href="/resources/">Resource Center</a></li><li><a href="/faqs/">FAQ Library</a></li><li><a href="/blog/">Capital Insights</a></li><li><a href="/contact/">Partner Portal</a></li></ul></div>
-        <div class="footer-col"><h4>Support</h4><ul><li><a href="/contact/">Contact Us</a></li><li><a href="/faqs/">FAQ</a></li><li><a href="/#heroForm">Apply Now</a></li></ul></div>
-      </div>
-      <div class="footer-bottom"><span>&copy; 2026 Atlas Fund Capital. All rights reserved.</span><div class="footer-bottom-links"><a href="/terms/">Terms of Use</a><a href="#">Privacy Policy</a><a href="#">Cookie Policy</a></div></div>
-    </div>
-  </footer>
-  <script src="/static/js/main.js"></script>
-</body>
-</html>
+<section class="cta-section">
+  <div class="container">
+    <h2>Explore your SBA eligibility.</h2>
+    <p>Begin the qualification process. Our advisors will map the path forward.</p>
+    <a href="/#heroForm" class="btn btn-gold btn-lg">Apply Now →</a>
+  </div>
+</section>
+{% endblock %}
