@@ -793,6 +793,19 @@ def superadmin_blog_delete(request, post_id):
     return JsonResponse({'success': True})
 
 
+@login_required
+@user_passes_test(is_superadmin)
+def superadmin_blog_remove_thumbnail(request, post_id):
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'error': 'POST required'}, status=400)
+    post = get_object_or_404(BlogPost, id=post_id)
+    if post.featured_image:
+        post.featured_image.delete(save=False)
+        post.featured_image = ''
+        post.save(update_fields=['featured_image'])
+    return JsonResponse({'success': True})
+
+
 # ─── AI Thumbnail Generator ──────────────────────────────────────────────────
 
 import threading
@@ -873,15 +886,31 @@ def superadmin_ai_thumbnails_generate(request):
                 break
             _thumbnail_progress['state']['current'] = post.title[:80]
             try:
-                prompt = (
-                    f"A professional, premium financial blog thumbnail image for an article titled "
-                    f"\"{post.title}\". Modern corporate style, dark navy and gold color palette, "
-                    f"clean minimal design, no text on the image, abstract geometric shapes, "
-                    f"luxury financial company aesthetic, 16:9 aspect ratio, photorealistic render."
+                # Step 1 — generate a creative image prompt from the post title
+                prompt_response = client.chat.completions.create(
+                    model="gpt-4o-mini",
+                    messages=[{
+                        "role": "system",
+                        "content": (
+                            "You create short, creative visual prompts for AI image generation. "
+                            "Given a blog article title, output a single paragraph describing what the "
+                            "featured image should look like. Use vivid visual language. "
+                            "Keep it under 400 chars. "
+                            "Output only the prompt, no quotes, no labels."
+                        ),
+                    }, {
+                        "role": "user",
+                        "content": f"Blog title: {post.title}",
+                    }],
+                    max_tokens=200,
+                    temperature=0.9,
                 )
+                visual_prompt = prompt_response.choices[0].message.content.strip()
+
+                # Step 2 — generate the image using the creative prompt
                 response = client.images.generate(
                     model="gpt-image-1",
-                    prompt=prompt,
+                    prompt=visual_prompt,
                     size="1024x1024",
                     quality="low",
                     n=1,
