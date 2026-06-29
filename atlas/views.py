@@ -811,9 +811,11 @@ def superadmin_ai_thumbnails(request):
         return JsonResponse({'success': True})
 
     from atlas.models import BlogPost
+    from django.db.models import Q
     posts_without_image = BlogPost.objects.filter(
-        is_published=True,
-        featured_image__isnull=True
+        is_published=True
+    ).filter(
+        Q(featured_image__isnull=True) | Q(featured_image='')
     ).order_by('-published_at')
 
     return render(request, 'pages/superadmin-ai-thumbnails.html', build_context(request, {
@@ -835,9 +837,11 @@ def superadmin_ai_thumbnails_generate(request):
         return JsonResponse({'success': False, 'error': 'No OpenAI API key saved. Add your key in Settings first.'})
 
     from atlas.models import BlogPost
+    from django.db.models import Q
     posts = BlogPost.objects.filter(
-        is_published=True,
-        featured_image__isnull=True
+        is_published=True
+    ).filter(
+        Q(featured_image__isnull=True) | Q(featured_image='')
     ).order_by('-published_at')
 
     total = posts.count()
