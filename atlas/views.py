@@ -880,15 +880,13 @@ def superadmin_ai_thumbnails_generate(request):
                     f"luxury financial company aesthetic, 16:9 aspect ratio, photorealistic render."
                 )
                 response = client.images.generate(
-                    model="dall-e-3",
+                    model="gpt-image-1",
                     prompt=prompt,
                     size="1024x1024",
-                    quality="standard",
+                    quality="low",
                     n=1,
                 )
-                image_url = response.data[0].url
-                import urllib.request
-                img_data = urllib.request.urlopen(image_url).read()
+                img_data = base64.b64decode(response.data[0].b64_json)
                 filename = f"ai_thumb_{post.slug}.png"
                 post.featured_image.save(filename, ContentFile(img_data), save=False)
                 post.save(update_fields=['featured_image'])

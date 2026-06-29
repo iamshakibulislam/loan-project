@@ -37,6 +37,9 @@
 # Tooling
 - Use Python (not Node.js) for new tooling, infrastructure, or servers in this Django/Python project. Confidence: 0.70
 
+# Admin Design
+- All superadmin pages must use the same consistent design pattern — light theme with toggle sidebar, matching the blog list page's CSS and layout. Confidence: 0.60
+
 # Images
 - Use descriptive placeholder text and alt text that specify what type of image should be placed. Confidence: 0.80
 
