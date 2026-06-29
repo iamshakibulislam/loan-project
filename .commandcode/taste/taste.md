@@ -34,6 +34,9 @@
 - Include a multi-step lead capture form in the hero: Step 1 asks "How much money do you need?" and "Monthly revenue", with a "Get Qualified" button. Step 2 reveals credit score and time-in-business fields. Step 3 reveals name, email, company, phone with a consent checkbox (agreement to receive texts/emails, automated/AI-assisted technology notice, consent not a condition, opt-out anytime) and Submit button. Confidence: 0.85
 - Hero form fields use text inputs (type manually) — not select dropdowns — except for time-in-business which remains a dropdown. All fields are required. Confidence: 0.70
 
+# Tooling
+- Use Python (not Node.js) for new tooling, infrastructure, or servers in this Django/Python project. Confidence: 0.70
+
 # Images
 - Use descriptive placeholder text and alt text that specify what type of image should be placed. Confidence: 0.80
 
