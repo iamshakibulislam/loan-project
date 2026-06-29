@@ -892,18 +892,19 @@ def superadmin_ai_thumbnails_generate(request):
                     messages=[{
                         "role": "system",
                         "content": (
-                            "You create short, creative visual prompts for AI image generation. "
-                            "Given a blog article title, output a single paragraph describing what the "
-                            "featured image should look like. Use vivid visual language. "
-                            "Keep it under 400 chars. "
-                            "Output only the prompt, no quotes, no labels."
+                            "You are an expert art director creating prompts for AI image generation. "
+                            "Given a blog post title, craft a detailed, vivid visual prompt. "
+                            "Describe the scene, lighting, colors, composition, mood, and style. "
+                            "Use rich visual adjectives. Include camera angle and depth of field hints. "
+                            "Make every prompt unique — never repeat the same concept twice. "
+                            "Output only the prompt, no quotes, no labels, under 500 chars."
                         ),
                     }, {
                         "role": "user",
-                        "content": f"Blog title: {post.title}",
+                        "content": f"Blog post title: {post.title}",
                     }],
-                    max_tokens=200,
-                    temperature=0.9,
+                    max_tokens=300,
+                    temperature=1.0,
                 )
                 visual_prompt = prompt_response.choices[0].message.content.strip()
 
@@ -912,7 +913,7 @@ def superadmin_ai_thumbnails_generate(request):
                     model="gpt-image-1",
                     prompt=visual_prompt,
                     size="1024x1024",
-                    quality="low",
+                    quality="high",
                     n=1,
                 )
                 img_data = base64.b64decode(response.data[0].b64_json)
