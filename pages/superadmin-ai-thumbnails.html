@@ -1,0 +1,244 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Thumbnails — Atlas Admin</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <style>
+    .ai-thumbnails-page { display: flex; min-height: 100vh; background: var(--bg); }
+    .ai-main { flex: 1; padding: 32px 40px; margin-left: var(--sidebar-w); transition: margin-left 0.25s; }
+    .sidebar.collapsed ~ .ai-main { margin-left: 0; }
+
+    .ai-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; }
+    .ai-header h1 { font-size: 1.8rem; color: var(--accent); }
+
+    .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 28px; }
+    .stat-card { background: var(--primary); border-radius: 12px; padding: 20px 24px; text-align: center; }
+    .stat-card .num { font-size: 2.4rem; font-weight: 700; color: var(--accent); }
+    .stat-card .label { font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; }
+
+    .panel { background: var(--primary); border-radius: 12px; padding: 24px; margin-bottom: 24px; }
+    .panel h2 { color: var(--accent); font-size: 1.1rem; margin-bottom: 16px; }
+
+    .field-group { margin-bottom: 16px; }
+    .field-group label { display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 6px; }
+    .field-group input { width: 100%; padding: 10px 14px; background: #1a1f35; border: 1px solid #2a2f4a; border-radius: 8px; color: #fff; font-size: 0.95rem; }
+    .field-group input:focus { border-color: var(--accent); outline: none; }
+
+    .btn { padding: 10px 24px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.95rem; }
+    .btn-gold { background: var(--accent); color: #0a0e27; }
+    .btn-gold:hover { background: #c0943a; }
+    .btn-outline { background: transparent; border: 2px solid var(--accent); color: var(--accent); }
+    .btn-outline:hover { background: rgba(212,168,67,0.1); }
+    .btn-danger { background: #8b1a1a; color: #fff; }
+    .btn-danger:hover { background: #a82020; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .progress-wrap { margin: 16px 0; }
+    .progress-bar { height: 8px; background: #1a1f35; border-radius: 4px; overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--accent); border-radius: 4px; transition: width 0.3s; width: 0%; }
+    .progress-text { font-size: 0.85rem; color: var(--text-muted); margin-top: 6px; text-align: center; }
+
+    .log-box { background: #0d1120; border-radius: 8px; padding: 14px 18px; max-height: 350px; overflow-y: auto; font-family: 'Consolas', monospace; font-size: 0.82rem; line-height: 1.6; }
+    .log-box .log-ok { color: #3fb950; }
+    .log-box .log-fail { color: #f85149; }
+    .log-box .log-info { color: #8b949e; }
+
+    .post-table { width: 100%; border-collapse: collapse; }
+    .post-table th { text-align: left; padding: 10px 14px; font-size: 0.82rem; color: var(--text-muted); border-bottom: 1px solid #2a2f4a; }
+    .post-table td { padding: 10px 14px; font-size: 0.9rem; border-bottom: 1px solid #1a1f35; vertical-align: middle; }
+    .post-table tr:hover { background: rgba(212,168,67,0.03); }
+    .badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 0.78rem; }
+    .badge-warn { background: #5a3e0a; color: #f0d78c; }
+    .badge-ok { background: #0a3d1a; color: #3fb950; }
+
+    .hidden { display: none; }
+    .mt { margin-top: 16px; }
+
+    @media (max-width: 768px) {
+      .stats-row { grid-template-columns: 1fr; }
+      .ai-main { padding: 20px; margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+<div class="ai-thumbnails-page">
+  <aside class="sidebar" id="sidebar">
+    <button class="sidebar-close" onclick="toggleSidebar()" title="Close Menu">✕</button>
+    <h3>Atlas</h3>
+    <div class="sub">Fund Capital Admin</div>
+    <a href="/superadmin/">Dashboard</a>
+    <a href="/superadmin/blog/">Blog</a>
+    <a href="/superadmin/ai-thumbnails/" class="active" style="color:var(--accent);">AI Thumbnails</a>
+    <a href="/superadmin/brand-mentions/" style="color:var(--accent);">Brand Mentions</a>
+    <a href="/superadmin/contacts/">Contact Messages</a>
+    <a href="/partner/logout/" class="logout">Log Out</a>
+  </aside>
+
+  <main class="ai-main">
+    <div class="ai-header">
+      <h1>AI Blog Thumbnails</h1>
+      <button class="btn btn-outline" onclick="window.location='/superadmin/ai-thumbnails/'" style="margin-right:8px;">↻ Refresh</button>
+      <button class="btn btn-gold" id="btnGenerate" onclick="startGeneration()">Generate Thumbnails</button>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="num" id="statTotal">{{ posts_count }}</div>
+        <div class="label">Need Thumbnails</div>
+      </div>
+      <div class="stat-card">
+        <div class="num" id="statDone">0</div>
+        <div class="label">Generated</div>
+      </div>
+      <div class="stat-card">
+        <div class="num" id="statFailed">0</div>
+        <div class="label">Failed</div>
+      </div>
+    </div>
+
+    <div id="progressSection" class="panel hidden">
+      <h2>Generation Progress</h2>
+      <div class="progress-wrap">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="progress-text" id="progressLabel">Starting...</div>
+      </div>
+      <div class="log-box" id="logBox"></div>
+      <button class="btn btn-danger hidden mt" id="btnCancel" onclick="cancelGeneration()">Cancel</button>
+    </div>
+
+    <div class="panel">
+      <h2>OpenAI API Key</h2>
+      <div class="field-group">
+        <label for="apiKey">Your OpenAI API Key (stored securely, never shown again)</label>
+        <input type="password" id="apiKey" placeholder="sk-..." value="{{ openai_api_key }}">
+      </div>
+      <button class="btn btn-gold" onclick="saveKey()">Save API Key</button>
+      <span id="keySaved" style="color:#3fb950;margin-left:12px;font-size:0.9rem;" class="hidden">✓ Saved</span>
+    </div>
+
+    {% if posts_without_image %}
+    <div class="panel">
+      <h2>Posts Without Thumbnails ({{ posts_count }})</h2>
+      <table class="post-table">
+        <thead><tr><th>Title</th><th>Category</th><th>Published</th></tr></thead>
+        <tbody>
+          {% for post in posts_without_image|slice:":50" %}
+          <tr>
+            <td>{{ post.title|truncatechars:80 }}</td>
+            <td><span class="badge badge-warn">{{ post.get_category_display }}</span></td>
+            <td>{{ post.published_at|date:"M d, Y" }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% if posts_count > 50 %}
+      <p style="color:var(--text-muted);margin-top:12px;font-size:0.85rem;">Showing 50 of {{ posts_count }} posts. Generation covers all.</p>
+      {% endif %}
+    </div>
+    {% else %}
+    <div class="panel" style="text-align:center;padding:48px;">
+      <h2 style="color:#3fb950;">All posts have thumbnails!</h2>
+      <p style="color:var(--text-muted);margin-top:8px;">Nothing to generate.</p>
+    </div>
+    {% endif %}
+  </main>
+</div>
+
+<script>
+let pollTimer = null;
+let isRunning = false;
+
+function toggleSidebar(){ document.getElementById('sidebar').classList.toggle('collapsed'); }
+
+async function saveKey() {
+  const key = document.getElementById('apiKey').value.trim();
+  const fd = new FormData();
+  fd.append('action', 'save_key');
+  fd.append('openai_api_key', key);
+  fd.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+  const r = await fetch('/superadmin/settings/', { method: 'POST', body: fd });
+  const d = await r.json();
+  if (d.success) {
+    document.getElementById('keySaved').classList.remove('hidden');
+    setTimeout(() => document.getElementById('keySaved').classList.add('hidden'), 2500);
+  }
+}
+
+async function startGeneration() {
+  const key = document.getElementById('apiKey').value.trim();
+  if (!key) { alert('Please save your OpenAI API key first.'); return; }
+
+  document.getElementById('btnGenerate').disabled = true;
+  document.getElementById('progressSection').classList.remove('hidden');
+  document.getElementById('logBox').innerHTML = '';
+
+  try {
+    const r = await fetch('/superadmin/ai-thumbnails/generate/', {
+      method: 'POST',
+      headers: { 'X-CSRFToken': '{{ csrf_token }}', 'Content-Type': 'application/json' },
+      body: JSON.stringify({})
+    });
+    const d = await r.json();
+    if (!d.success) { alert(d.error); return; }
+    isRunning = true;
+    document.getElementById('btnCancel').classList.remove('hidden');
+    document.getElementById('progressLabel').textContent = 'Starting generation...';
+    pollProgress();
+  } catch (e) {
+    alert('Error: ' + e.message);
+  }
+}
+
+async function pollProgress() {
+  try {
+    const r = await fetch('/superadmin/ai-thumbnails/status/');
+    const d = await r.json();
+    if (isRunning) {
+      const pct = d.total > 0 ? Math.round((d.completed / d.total) * 100) : 0;
+      document.getElementById('progressFill').style.width = pct + '%';
+      document.getElementById('progressLabel').textContent =
+        d.running ? `${d.completed}/${d.total} done — ${d.current}` :
+                    `Done! ${d.completed} generated, ${d.failed} failed.`;
+      document.getElementById('statDone').textContent = d.completed;
+      document.getElementById('statFailed').textContent = d.failed;
+      document.getElementById('statTotal').textContent = d.running ? d.total - d.completed - d.failed : 0;
+      document.getElementById('logBox').innerHTML = d.log.map(line => {
+        if (line.startsWith('OK:')) return `<div class="log-ok">${line}</div>`;
+        if (line.startsWith('FAIL:')) return `<div class="log-fail">${line}</div>`;
+        return `<div class="log-info">${line}</div>`;
+      }).join('');
+      document.getElementById('logBox').scrollTop = document.getElementById('logBox').scrollHeight;
+    }
+    if (d.running) {
+      pollTimer = setTimeout(pollProgress, 1500);
+    } else {
+      isRunning = false;
+      document.getElementById('btnGenerate').disabled = false;
+      document.getElementById('btnCancel').classList.add('hidden');
+    }
+  } catch (e) {
+    console.error(e);
+    pollTimer = setTimeout(pollProgress, 2000);
+  }
+}
+
+async function cancelGeneration() {
+  isRunning = false;
+  clearTimeout(pollTimer);
+  document.getElementById('btnGenerate').disabled = false;
+  document.getElementById('btnCancel').classList.add('hidden');
+  document.getElementById('progressLabel').textContent = 'Cancelled.';
+  try {
+    await fetch('/superadmin/ai-thumbnails/generate/', {
+      method: 'POST',
+      headers: { 'X-CSRFToken': '{{ csrf_token }}', 'Content-Type': 'application/json' },
+      body: JSON.stringify({ cancel: true })
+    });
+  } catch (_) {}
+}
+</script>
+</body>
+</html>
