@@ -1,12 +1,19 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import User, Lead, Referral, Transaction, BankAccount, Payout, DealSubmission, BlogPost, Contact
+from .models import User, Lead, Referral, Transaction, BankAccount, Payout, DealSubmission, BlogPost, Contact, BrandMention
 
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
     list_display = ('email', 'role', 'company_name', 'referral_code', 'is_approved', 'created_at')
     list_filter = ('role', 'is_approved')
     search_fields = ('email', 'company_name', 'referral_code')
+    ordering = ('-created_at',)
+
+
+@admin.register(BrandMention)
+class BrandMentionAdmin(admin.ModelAdmin):
+    list_display = ('title', 'url', 'created_at')
+    search_fields = ('title', 'url')
     ordering = ('-created_at',)
     fieldsets = UserAdmin.fieldsets + (('Partner Info', {'fields': ('role', 'company_name', 'phone', 'referral_code', 'referred_by', 'is_approved')}),)
 

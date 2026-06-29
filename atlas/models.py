@@ -287,3 +287,15 @@ class Contact(models.Model):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} - {self.subject}"
+
+
+class BrandMention(models.Model):
+    title = models.CharField(max_length=300)
+    url = models.URLField(max_length=500)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return self.title

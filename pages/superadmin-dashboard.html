@@ -151,6 +151,8 @@
       <a href="#" onclick="switchTab('partners')">Partners</a>
       <a href="#" onclick="switchTab('settings')">Settings</a>
       <a href="/superadmin/blog/" style="color:var(--accent);font-weight:600;">Blog &rarr;</a>
+      <a href="/superadmin/ai-thumbnails/" style="color:var(--accent);">AI Thumbnails</a>
+      <a href="/superadmin/brand-mentions/" style="color:var(--accent);">Brand Mentions</a>
       <a href="/superadmin/contacts/">Contact Messages</a>
       <a href="/partner/logout/" class="logout">Sign Out</a>
     </aside>
@@ -393,6 +395,16 @@
             <span style="font-size:0.76rem;color:var(--text-light);">Partners cannot request payout below this balance.</span>
           </div>
           <button class="btn btn-gold" onclick="saveSettings()">Save Settings</button>
+        </div>
+        <div class="panel" style="max-width:600px;margin-top:16px;">
+          <h2>AI Blog Thumbnails</h2>
+          <div class="field-group">
+            <label for="setOpenAIKey">OpenAI API Key</label>
+            <input type="password" id="setOpenAIKey" value="{{ app_settings.openai_api_key }}" placeholder="sk-...">
+            <span style="font-size:0.76rem;color:var(--text-light);">Used by the AI thumbnail generator. Never shared.</span>
+          </div>
+          <button class="btn btn-gold" onclick="saveOpenAIKey()">Save API Key</button>
+          <span id="keySaveStatus" style="margin-left:12px;font-size:0.85rem;"></span>
         </div>
       </div>
     </main>
@@ -832,6 +844,21 @@
         .then(function(r) { return r.json(); })
         .then(function(d) { if (d.success) { showToast('Settings saved', 'success'); } })
         .catch(function() { showToast('Save failed', 'error'); });
+    }
+
+    function saveOpenAIKey() {
+      var fd = new FormData();
+      fd.append('openai_api_key', document.getElementById('setOpenAIKey').value);
+      fetch('/superadmin/settings/', { method: 'POST', body: fd, headers: { 'X-CSRFToken': csrf } })
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          if (d.success) {
+            document.getElementById('keySaveStatus').textContent = '✓ Saved';
+            document.getElementById('keySaveStatus').style.color = '#3fb950';
+            setTimeout(function(){ document.getElementById('keySaveStatus').textContent = ''; }, 2500);
+          }
+        })
+        .catch(function() { document.getElementById('keySaveStatus').textContent = 'Failed'; });
     }
 
     function showBankDetails(e, bankName, holderName, acctNum, routingNum, acctType) {

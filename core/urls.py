@@ -45,8 +45,13 @@ urlpatterns = [
     path('superadmin/blog/save/', views.superadmin_blog_save, name='superadmin_blog_save'),
     path('superadmin/blog/<int:post_id>/edit/', views.superadmin_blog_edit, name='superadmin_blog_edit'),
     path('superadmin/blog/<int:post_id>/delete/', views.superadmin_blog_delete, name='superadmin_blog_delete'),
+    path('superadmin/ai-thumbnails/', views.superadmin_ai_thumbnails, name='superadmin_ai_thumbnails'),
+    path('superadmin/ai-thumbnails/generate/', views.superadmin_ai_thumbnails_generate, name='superadmin_ai_thumbnails_generate'),
+    path('superadmin/ai-thumbnails/status/', views.superadmin_ai_thumbnails_status, name='superadmin_ai_thumbnails_status'),
     path('superadmin/contacts/', views.superadmin_contacts, name='superadmin_contacts'),
     path('superadmin/contacts/<int:contact_id>/delete/', views.superadmin_contact_delete, name='superadmin_contact_delete'),
+    path('superadmin/brand-mentions/', views.superadmin_brand_mentions, name='superadmin_brand_mentions'),
+    path('superadmin/brand-mentions/<int:mention_id>/delete/', views.superadmin_brand_mention_delete, name='superadmin_brand_mention_delete'),
 ]
 
 if settings.DEBUG:
