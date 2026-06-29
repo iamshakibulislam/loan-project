@@ -45,6 +45,7 @@ urlpatterns = [
     path('superadmin/blog/save/', views.superadmin_blog_save, name='superadmin_blog_save'),
     path('superadmin/blog/<int:post_id>/edit/', views.superadmin_blog_edit, name='superadmin_blog_edit'),
     path('superadmin/blog/<int:post_id>/delete/', views.superadmin_blog_delete, name='superadmin_blog_delete'),
+    path('superadmin/blog/<int:post_id>/remove-thumbnail/', views.superadmin_blog_remove_thumbnail, name='superadmin_blog_remove_thumbnail'),
     path('superadmin/ai-thumbnails/', views.superadmin_ai_thumbnails, name='superadmin_ai_thumbnails'),
     path('superadmin/ai-thumbnails/generate/', views.superadmin_ai_thumbnails_generate, name='superadmin_ai_thumbnails_generate'),
     path('superadmin/ai-thumbnails/status/', views.superadmin_ai_thumbnails_status, name='superadmin_ai_thumbnails_status'),

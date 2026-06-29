@@ -42,6 +42,8 @@
 
 # Images
 - Use descriptive placeholder text and alt text that specify what type of image should be placed. Confidence: 0.80
+- For AI-generated thumbnails, first generate a creative custom prompt with AI, then use that prompt to generate the thumbnail image. Confidence: 0.75
+- AI-generated blog thumbnails may include text in the image — do not prohibit text in image prompts. Confidence: 0.65
 
 # Footer
 - Keep all footer items from LoanableUSA except: careers, real estate section, security item link, and success stories. Confidence: 0.80

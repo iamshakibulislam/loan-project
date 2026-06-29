@@ -177,6 +177,7 @@
               <input type="file" name="featured_image" accept="image/*">
               {% if post.featured_image %}
               <span style="font-size:0.74rem;color:var(--text-light);display:block;margin-top:3px;">Current: {{ post.featured_image.name }}</span>
+              <button type="button" class="btn btn-red btn-sm" onclick="removeThumbnail({{ post.id }})" style="margin-top:6px;">Remove Thumbnail</button>
               {% endif %}
             </div>
           </div>
@@ -748,6 +749,19 @@
         '<p class="preview-meta">' + document.getElementById('categorySelect').value + ' &middot; Preview</p>' +
         editor.innerHTML +
         '</body></html>');
+    }
+
+    async function removeThumbnail(postId) {
+      if (!confirm('Remove the featured image from this post?')) return;
+      try {
+        const r = await fetch('/superadmin/blog/' + postId + '/remove-thumbnail/', {
+          method: 'POST',
+          headers: { 'X-CSRFToken': '{{ csrf_token }}' }
+        });
+        const d = await r.json();
+        if (d.success) { window.location.reload(); }
+        else { alert('Failed to remove thumbnail.'); }
+      } catch (_) { alert('Failed to remove thumbnail.'); }
     }
   </script>
 </body>
