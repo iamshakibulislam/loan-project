@@ -67,6 +67,8 @@ class Lead(models.Model):
     ])
     referred_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name='referred_leads')
     referral_code_used = models.CharField(max_length=20, blank=True)
+    referrer = models.CharField(max_length=500, blank=True)
+    landing_page = models.CharField(max_length=500, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

@@ -94,7 +94,17 @@ function initHeroForm() {
         .then(function(r) { return r.json(); })
         .then(function(data) {
           if (data.success) {
-            fireLeadEvent('hero');
+            var eventParams = {
+              referral_source: data.referrer || 'direct',
+              landing_page: data.landing_page || window.location.href,
+              form_type: 'hero'
+            };
+            if (typeof gtag === 'function') {
+              gtag('event', 'generate_lead', eventParams);
+              console.log('[GA] generate_lead fired:', eventParams);
+            } else {
+              console.warn('[GA] gtag not available — event not sent:', eventParams);
+            }
             steps.forEach(function(s) { s.classList.remove('active'); });
             if (progress) progress.style.display = 'none';
             if (successEl) successEl.style.display = 'block';
@@ -106,29 +116,6 @@ function initHeroForm() {
           if (successEl) successEl.style.display = 'block';
         });
     });
-
-    function fireLeadEvent(formType) {
-      var landing = getLandingSource();
-      var eventParams = {
-        referral_source: landing.ref,
-        landing_page: landing.landing,
-        form_type: formType
-      };
-      if (typeof gtag === 'function') {
-        gtag('event', 'generate_lead', eventParams);
-        console.log('[GA] generate_lead fired:', eventParams);
-      } else {
-        console.warn('[GA] gtag not available — event not sent:', eventParams);
-      }
-    }
-
-    function getLandingSource() {
-      var cookie = document.cookie.split('; ').find(function(r) { return r.startsWith('atlas_landing='); });
-      if (cookie) {
-        try { return JSON.parse(decodeURIComponent(cookie.split('=')[1])); } catch(e) {}
-      }
-      return { ref: document.referrer || 'direct', landing: window.location.href };
-    }
   }
 }
 

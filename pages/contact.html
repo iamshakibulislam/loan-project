@@ -125,14 +125,14 @@
       var res = await fetch('/contact/', { method: 'POST', body: fd });
       var data = await res.json();
       if (data.success) {
-        var landingCookie = document.cookie.split('; ').find(function(r){return r.startsWith('atlas_landing=')});
         var landing = { ref: 'direct', landing: window.location.href };
+        var landingCookie = document.cookie.split('; ').find(function(r){return r.startsWith('atlas_landing=')});
         if (landingCookie) {
           try { landing = JSON.parse(decodeURIComponent(landingCookie.split('=')[1])); } catch(e) {}
         }
         var eventParams = {
-          referral_source: landing.ref,
-          landing_page: landing.landing,
+          referral_source: landing.ref || 'direct',
+          landing_page: landing.landing || window.location.href,
           form_type: 'contact'
         };
         if (typeof gtag === 'function') {
