@@ -48,6 +48,7 @@
 
 # Analytics
 - Capture HTTP referrer server-side for GA4 events — client-side document.referrer is unreliable and often stripped. Confidence: 0.75
+- Superadmin leads table should include a referral source column showing the external referrer URL for organic leads, or the affiliate name/ID/email for referral leads. Confidence: 0.80
 
 # Footer
 - Keep all footer items from LoanableUSA except: careers, real estate section, security item link, and success stories. Confidence: 0.80

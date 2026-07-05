@@ -191,7 +191,7 @@
 
           <div class="table-outer">
             <table class="dtable">
-              <thead><tr><th style="width:38px;"><input type="checkbox" id="selectAll" onclick="toggleSelectAll()"></th><th>Name</th><th>Company</th><th>Email</th><th>Revenue</th><th>Credit</th><th>Time in Biz</th><th>Status</th><th>Source</th><th>Referred By</th><th>Date</th><th style="min-width:210px;">Actions</th></tr></thead>
+              <thead><tr><th style="width:38px;"><input type="checkbox" id="selectAll" onclick="toggleSelectAll()"></th><th>Name</th><th>Company</th><th>Email</th><th>Revenue</th><th>Credit</th><th>Time in Biz</th><th>Status</th><th>Source</th><th>Traffic Source</th><th>Date</th><th style="min-width:210px;">Actions</th></tr></thead>
               <tbody id="leadsBody">
                 {% for lead in leads %}
                 <tr data-id="{{ lead.id }}" data-status="{{ lead.status }}" class="clickable" onclick="openDetail({{ lead.id }})">
@@ -204,7 +204,15 @@
                   <td>{{ lead.time_in_business }}</td>
                   <td class="td-status"><span class="badge badge-{{ lead.status }}">{{ lead.get_status_display }}</span></td>
                   <td><span class="badge badge-{{ lead.source }}">{{ lead.source }}</span></td>
-                  <td><span class="cell-ref" title="{{ lead.referred_by.email|default:'—' }}">{{ lead.referred_by.email|default:"—" }}</span></td>
+                  <td>
+                    {% if lead.referred_by %}
+                    <span class="cell-ref" title="{{ lead.referred_by.email }}">{{ lead.referred_by.email }}</span>
+                    {% elif lead.referrer and lead.referrer != 'direct' %}
+                    <span class="cell-ref" title="{{ lead.referrer }}">{{ lead.referrer }}</span>
+                    {% else %}
+                    Direct
+                    {% endif %}
+                  </td>
                   <td>{{ lead.created_at|date:"M d, H:i" }}</td>
                   <td onclick="event.stopPropagation()">
                     <div class="cell-actions">
@@ -481,6 +489,8 @@
       status_display: "{{ lead.get_status_display }}",
       source: "{{ lead.source }}",
       referred_email: "{{ lead.referred_by.email|default:'' }}",
+      referrer: "{{ lead.referrer|escapejs }}",
+      landing_page: "{{ lead.landing_page|escapejs }}",
       created_at: "{{ lead.created_at|date:'M d, H:i' }}"
     };
     {% endfor %}
@@ -620,6 +630,8 @@
         { label: 'Status', value: data.status_display },
         { label: 'Source', value: data.source },
         { label: 'Referred By', value: data.referred_email || '—' },
+        { label: 'Referrer', value: data.referrer || 'direct' },
+        { label: 'Landing Page', value: data.landing_page || '—' }
         { label: 'Notes', value: data.notes || '—' },
         { label: 'Created', value: data.created_at },
       ];
