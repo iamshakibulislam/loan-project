@@ -171,17 +171,11 @@ def submit_lead(request):
 
 
 def _parse_landing_cookie(request):
-    import json
-    cookie = request.COOKIES.get('atlas_landing', '')
-    if cookie:
-        try:
-            return json.loads(cookie)
-        except (json.JSONDecodeError, TypeError):
-            pass
-    fallback_ref = request.META.get('HTTP_REFERER', '')
+    src = request.COOKIES.get('atlas_src', '')
+    landing = request.COOKIES.get('atlas_landing', '')
     return {
-        'ref': fallback_ref if fallback_ref else 'direct',
-        'landing': request.build_absolute_uri('/'),
+        'ref': src if src else 'direct',
+        'landing': landing if landing else request.build_absolute_uri('/'),
     }
 
 
