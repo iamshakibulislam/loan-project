@@ -629,13 +629,14 @@ def superadmin_export_csv(request):
     writer = csv.writer(csv_buffer)
     writer.writerow(['Name', 'Email', 'Company', 'Phone', 'Funding Amount', 'Monthly Revenue',
                      'Credit Score', 'Time in Business', 'Status', 'Source', 'Referral Code',
-                     'Referred By', 'Created At'])
+                     'Referred By', 'Referrer', 'Landing Page', 'Created At'])
     for lead in leads:
         writer.writerow([
             lead.full_name, lead.email, lead.company_name, lead.phone,
             lead.funding_amount, lead.monthly_revenue, lead.credit_score,
             lead.time_in_business, lead.status, lead.source,
             lead.referral_code_used, lead.referred_by.email if lead.referred_by else '',
+            lead.referrer, lead.landing_page,
             lead.created_at.strftime('%Y-%m-%d %H:%M')
         ])
 
