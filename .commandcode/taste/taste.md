@@ -46,6 +46,9 @@
 - AI-generated blog thumbnails may include text in the image — do not prohibit text in image prompts. Confidence: 0.65
 - Use a high-quality image model (e.g., DALL·E 3 HD or equivalent) with detailed, vivid prompting for AI-generated thumbnails — low-quality outputs are unacceptable. Confidence: 0.70
 
+# Analytics
+- Capture HTTP referrer server-side for GA4 events — client-side document.referrer is unreliable and often stripped. Confidence: 0.75
+
 # Footer
 - Keep all footer items from LoanableUSA except: careers, real estate section, security item link, and success stories. Confidence: 0.80
 - Use Atlas Fund Capital's business address (not LoanableUSA's) in the footer. Confidence: 0.85

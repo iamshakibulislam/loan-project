@@ -145,6 +145,11 @@ def submit_lead(request):
         except User.DoesNotExist:
             pass
 
+    landing_source = _parse_landing_cookie(request)
+
+    data['referrer'] = landing_source['ref']
+    data['landing_page'] = landing_source['landing']
+
     lead = Lead.objects.create(**data, source=source, referred_by=referred_by, referral_code_used=ref_code)
 
     if referred_by:
@@ -157,7 +162,27 @@ def submit_lead(request):
             visitor_agent=request.META.get('HTTP_USER_AGENT', ''),
         )
 
-    return JsonResponse({'success': True, 'message': 'Lead submitted successfully.'})
+    return JsonResponse({
+        'success': True,
+        'message': 'Lead submitted successfully.',
+        'referrer': landing_source['ref'],
+        'landing_page': landing_source['landing'],
+    })
+
+
+def _parse_landing_cookie(request):
+    import json
+    cookie = request.COOKIES.get('atlas_landing', '')
+    if cookie:
+        try:
+            return json.loads(cookie)
+        except (json.JSONDecodeError, TypeError):
+            pass
+    fallback_ref = request.META.get('HTTP_REFERER', '')
+    return {
+        'ref': fallback_ref if fallback_ref else 'direct',
+        'landing': request.build_absolute_uri('/'),
+    }
 
 
 # ─── Authentication ──────────────────────────────────────────────────────────
