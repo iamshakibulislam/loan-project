@@ -1,0 +1,1 @@
+{"jsonrpc":"2.0","method":"tools/call","params":{"name":"list_recent_posts","arguments":{"limit":3}},"id":"readtest"}

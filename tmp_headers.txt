@@ -1,0 +1,13 @@
+HTTP/1.1 200 OK
+Date: Sun, 05 Jul 2026 12:19:21 GMT
+Content-Type: application/json
+Content-Length: 278
+Connection: keep-alive
+Server: cloudflare
+Nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+Mcp-Session-Id: 8737cacd46384baaba922ac63440ab3d
+Cf-Cache-Status: DYNAMIC
+Report-To: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=YiLmGpBMiqOLo7Py1sq4MS%2BaDm7V4NgHSYzBbaqxltipOTZeEbU2DC3mw7vqPWpLlbbPdAklJ24HjGV7tr6Lo5tNqrpMBW1gLBOuy5NnCX3DWo%2FTfD1wQxgcTtZa8vrKyYc3yG8wWA%3D%3D"}]}
+CF-RAY: a16651494afcc70f-DAC
+alt-svc: h3=":443"; ma=86400
+
