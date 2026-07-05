@@ -12,7 +12,7 @@ from django.utils.timezone import now
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-from .models import User, Lead, Referral, Transaction, BankAccount, Payout, DealSubmission, AppSettings, BlogPost, Contact
+from .models import User, Lead, Referral, Transaction, BankAccount, Payout, DealSubmission, AppSettings, BlogPost, Contact, BrandMention
 
 
 # ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -36,16 +36,16 @@ def build_context(request, extra=None):
 
 def home(request):
     recent_posts = BlogPost.objects.filter(is_published=True).order_by('-published_at')[:4]
-    return render(request, 'index.html', {'recent_posts': recent_posts, 'active_page': 'home'})
+    return render(request, 'index.html', {'recent_posts': recent_posts})
 
 def about(request):
-    return render(request, 'pages/about.html', {'active_page': 'about'})
+    return render(request, 'pages/about.html')
 
 def how_it_works(request):
-    return render(request, 'pages/how-it-works.html', {'active_page': 'how-it-works'})
+    return render(request, 'pages/how-it-works.html')
 
 def faqs(request):
-    return render(request, 'pages/faqs.html', {'active_page': 'faqs'})
+    return render(request, 'pages/faqs.html')
 
 @csrf_exempt
 def contact(request):
@@ -67,7 +67,7 @@ def contact(request):
             message=message_text,
         )
         return JsonResponse({'success': True, 'message': 'Message received. We will respond within one business day.'})
-    return render(request, 'pages/contact.html', build_context(request, {'active_page': 'contact'}))
+    return render(request, 'pages/contact.html', build_context(request))
 
 def blog(request):
     posts = BlogPost.objects.filter(is_published=True).order_by('-published_at')
@@ -75,7 +75,7 @@ def blog(request):
     page_number = request.GET.get('page', 1)
     posts_page = paginator.get_page(page_number)
     return render(request, 'pages/blog.html', build_context(request, {
-        'posts': posts_page, 'active_page': 'blog',
+        'posts': posts_page,
     }))
 
 
@@ -85,14 +85,19 @@ def blog_post_detail(request, slug):
     return render(request, 'pages/blog-detail.html', build_context(request, {
         'post': post,
         'recent_posts': recent_posts,
-        'active_page': 'blog',
     }))
 
 def resources(request):
-    return render(request, 'pages/resources.html', {'active_page': 'resources'})
+    mentions = BrandMention.objects.all().order_by('-created_at')
+    paginator = Paginator(mentions, 12)
+    page_number = request.GET.get('page', 1)
+    mentions_page = paginator.get_page(page_number)
+    return render(request, 'pages/resources.html', {
+        'brand_mentions': mentions_page,
+    })
 
 def terms(request):
-    return render(request, 'pages/terms.html', {'active_page': 'terms'})
+    return render(request, 'pages/terms.html')
 
 def product_page(request, slug):
     templates = {
@@ -105,10 +110,10 @@ def product_page(request, slug):
         'business-acquisition': 'pages/business-acquisition.html',
     }
     template = templates.get(slug, 'pages/404.html')
-    return render(request, template, {'active_page': 'products'})
+    return render(request, template)
 
 def partner_detail(request):
-    return render(request, 'pages/partner-detail.html', {'active_page': 'partner'})
+    return render(request, 'pages/partner-detail.html')
 
 
 # ─── Lead Submission (Homepage Form + Referral Form) ───────────────────────────
@@ -438,6 +443,7 @@ def superadmin_dashboard(request):
         'app_settings': {
             'default_ppl_rate': AppSettings.get_ppl(),
             'min_payout': AppSettings.get_min_payout(),
+            'openai_api_key': AppSettings.get('openai_api_key', ''),
         },
         'filters': {
             'status': status_filter,
@@ -687,6 +693,7 @@ def superadmin_settings(request):
     if request.method == 'POST':
         AppSettings.set('default_ppl_rate', request.POST.get('default_ppl_rate', 100), 'Default pay per qualified lead')
         AppSettings.set('min_payout_amount', request.POST.get('min_payout_amount', 500), 'Minimum balance for partner payout')
+        AppSettings.set('openai_api_key', request.POST.get('openai_api_key', ''), 'OpenAI API key for AI thumbnail generation')
         return JsonResponse({'success': True})
     return JsonResponse({'success': False}, status=400)
 
@@ -788,6 +795,157 @@ def superadmin_blog_delete(request, post_id):
 
 @login_required
 @user_passes_test(is_superadmin)
+def superadmin_blog_remove_thumbnail(request, post_id):
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'error': 'POST required'}, status=400)
+    post = get_object_or_404(BlogPost, id=post_id)
+    if post.featured_image:
+        post.featured_image.delete(save=False)
+        post.featured_image = ''
+        post.save(update_fields=['featured_image'])
+    return JsonResponse({'success': True})
+
+
+# ─── AI Thumbnail Generator ──────────────────────────────────────────────────
+
+import threading
+import base64
+import io
+import json
+from django.core.files.base import ContentFile
+
+_thumbnail_progress = {}
+
+@login_required
+@user_passes_test(is_superadmin)
+def superadmin_ai_thumbnails(request):
+    if request.method == 'POST' and request.POST.get('action') == 'save_key':
+        AppSettings.set('openai_api_key', request.POST.get('openai_api_key', ''), 'OpenAI API key')
+        return JsonResponse({'success': True})
+
+    from atlas.models import BlogPost
+    from django.db.models import Q
+    posts_without_image = BlogPost.objects.filter(
+        is_published=True
+    ).filter(
+        Q(featured_image__isnull=True) | Q(featured_image='')
+    ).order_by('-published_at')
+
+    return render(request, 'pages/superadmin-ai-thumbnails.html', build_context(request, {
+        'posts_count': posts_without_image.count(),
+        'posts_without_image': posts_without_image,
+        'openai_api_key': AppSettings.get('openai_api_key', ''),
+        'current_progress': _thumbnail_progress.get('state', {}),
+    }))
+
+
+@login_required
+@user_passes_test(is_superadmin)
+def superadmin_ai_thumbnails_generate(request):
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'error': 'POST required'}, status=400)
+
+    api_key = AppSettings.get('openai_api_key', '')
+    if not api_key:
+        return JsonResponse({'success': False, 'error': 'No OpenAI API key saved. Add your key in Settings first.'})
+
+    from atlas.models import BlogPost
+    from django.db.models import Q
+    posts = BlogPost.objects.filter(
+        is_published=True
+    ).filter(
+        Q(featured_image__isnull=True) | Q(featured_image='')
+    ).order_by('-published_at')
+
+    total = posts.count()
+    if total == 0:
+        return JsonResponse({'success': False, 'error': 'All published posts already have featured images.'})
+
+    _thumbnail_progress['state'] = {
+        'running': True,
+        'total': total,
+        'completed': 0,
+        'failed': 0,
+        'current': '',
+        'log': [],
+    }
+
+    def _generate():
+        from atlas.models import BlogPost as BP
+        client = None
+        try:
+            from openai import OpenAI
+            client = OpenAI(api_key=api_key)
+        except Exception:
+            _thumbnail_progress['state']['running'] = False
+            _thumbnail_progress['state']['log'].append('Failed to initialize OpenAI client.')
+            return
+
+        for post in posts:
+            if not _thumbnail_progress['state']['running']:
+                break
+            _thumbnail_progress['state']['current'] = post.title[:80]
+            try:
+                # Step 1 — generate a creative image prompt from the post title
+                prompt_response = client.chat.completions.create(
+                    model="gpt-4o-mini",
+                    messages=[{
+                        "role": "system",
+                        "content": (
+                            "You are an expert art director creating prompts for AI image generation. "
+                            "Given a blog post title, craft a detailed, vivid visual prompt. "
+                            "Describe the scene, lighting, colors, composition, mood, and style. "
+                            "Use rich visual adjectives. Include camera angle and depth of field hints. "
+                            "Make every prompt unique — never repeat the same concept twice. "
+                            "Output only the prompt, no quotes, no labels, under 500 chars."
+                        ),
+                    }, {
+                        "role": "user",
+                        "content": f"Blog post title: {post.title}",
+                    }],
+                    max_tokens=300,
+                    temperature=1.0,
+                )
+                visual_prompt = prompt_response.choices[0].message.content.strip()
+
+                # Step 2 — generate the image using the creative prompt
+                response = client.images.generate(
+                    model="gpt-image-1",
+                    prompt=visual_prompt,
+                    size="1024x1024",
+                    quality="high",
+                    n=1,
+                )
+                img_data = base64.b64decode(response.data[0].b64_json)
+                filename = f"ai_thumb_{post.slug}.png"
+                post.featured_image.save(filename, ContentFile(img_data), save=False)
+                post.save(update_fields=['featured_image'])
+                _thumbnail_progress['state']['completed'] += 1
+                _thumbnail_progress['state']['log'].append(f'OK: {post.title[:60]}')
+            except Exception as e:
+                _thumbnail_progress['state']['failed'] += 1
+                _thumbnail_progress['state']['log'].append(f'FAIL: {post.title[:60]} — {str(e)[:100]}')
+        _thumbnail_progress['state']['running'] = False
+        _thumbnail_progress['state']['current'] = 'Done'
+        _thumbnail_progress['state']['log'].append(
+            f'Finished. {_thumbnail_progress["state"]["completed"]} generated, {_thumbnail_progress["state"]["failed"]} failed.'
+        )
+
+    threading.Thread(target=_generate, daemon=True).start()
+    return JsonResponse({'success': True, 'total': total})
+
+
+@login_required
+@user_passes_test(is_superadmin)
+def superadmin_ai_thumbnails_status(request):
+    state = _thumbnail_progress.get('state', {
+        'running': False, 'total': 0, 'completed': 0, 'failed': 0, 'current': '', 'log': []
+    })
+    return JsonResponse(state)
+
+
+@login_required
+@user_passes_test(is_superadmin)
 def superadmin_contacts(request):
     contacts = Contact.objects.all().order_by('-created_at')
     paginator = Paginator(contacts, 25)
@@ -806,4 +964,33 @@ def superadmin_contact_delete(request, contact_id):
         return JsonResponse({'success': False, 'error': 'POST required'}, status=400)
     contact = get_object_or_404(Contact, id=contact_id)
     contact.delete()
+    return JsonResponse({'success': True})
+
+
+# ─── Brand Mentions ─────────────────────────────────────────────────────────
+
+@login_required
+@user_passes_test(is_superadmin)
+def superadmin_brand_mentions(request):
+    if request.method == 'POST':
+        title = request.POST.get('title', '').strip()
+        url = request.POST.get('url', '').strip()
+        if not title or not url:
+            return JsonResponse({'success': False, 'error': 'Title and URL are required.'})
+        BrandMention.objects.create(title=title, url=url)
+        return JsonResponse({'success': True})
+
+    mentions = BrandMention.objects.all().order_by('-created_at')
+    return render(request, 'pages/superadmin-brand-mentions.html', build_context(request, {
+        'mentions': mentions,
+    }))
+
+
+@login_required
+@user_passes_test(is_superadmin)
+def superadmin_brand_mention_delete(request, mention_id):
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'error': 'POST required'}, status=400)
+    mention = get_object_or_404(BrandMention, id=mention_id)
+    mention.delete()
     return JsonResponse({'success': True})

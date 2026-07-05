@@ -94,6 +94,12 @@ function initHeroForm() {
         .then(function(r) { return r.json(); })
         .then(function(data) {
           if (data.success) {
+            var landing = getLandingSource();
+            gtag('event', 'lead_submitted', {
+              referral_source: landing.ref,
+              landing_page: landing.landing,
+              form_type: 'hero'
+            });
             steps.forEach(function(s) { s.classList.remove('active'); });
             if (progress) progress.style.display = 'none';
             if (successEl) successEl.style.display = 'block';
@@ -105,6 +111,14 @@ function initHeroForm() {
           if (successEl) successEl.style.display = 'block';
         });
     });
+
+    function getLandingSource() {
+      var cookie = document.cookie.split('; ').find(function(r) { return r.startsWith('atlas_landing='); });
+      if (cookie) {
+        try { return JSON.parse(decodeURIComponent(cookie.split('=')[1])); } catch(e) {}
+      }
+      return { ref: document.referrer || 'direct', landing: window.location.href };
+    }
   }
 }
 

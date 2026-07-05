@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atlas Fund Capital — Blog MCP Server Setup Guide</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: #0d1117;
+    color: #c9d1d9;
+    line-height: 1.7;
+    padding: 40px 20px;
+  }
+  .container { max-width: 820px; margin: 0 auto; }
+  h1 {
+    font-size: 2.2rem;
+    background: linear-gradient(135deg, #d4a843, #f0d78c);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+  .subtitle { color: #8b949e; font-size: 1rem; margin-bottom: 40px; }
+  h2 {
+    color: #d4a843;
+    font-size: 1.4rem;
+    margin: 36px 0 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #21262d;
+  }
+  h3 { color: #f0d78c; font-size: 1.1rem; margin: 20px 0 8px; }
+  p { margin: 10px 0; }
+  ol, ul { padding-left: 24px; margin: 10px 0; }
+  li { margin: 6px 0; }
+  a { color: #58a6ff; }
+  code {
+    background: #161b22;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.92em;
+    color: #f0d78c;
+  }
+  pre {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 18px 20px;
+    overflow-x: auto;
+    margin: 12px 0;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    position: relative;
+  }
+  pre button {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    background: #21262d;
+    color: #c9d1d9;
+    border: 1px solid #30363d;
+    border-radius: 4px;
+    padding: 4px 10px;
+    font-size: 0.75rem;
+    cursor: pointer;
+  }
+  pre button:hover { background: #30363d; }
+  .note {
+    background: #1a1f2b;
+    border-left: 4px solid #d4a843;
+    padding: 14px 18px;
+    border-radius: 0 8px 8px 0;
+    margin: 14px 0;
+  }
+  .step {
+    background: #161b22;
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin: 18px 0;
+    border: 1px solid #21262d;
+  }
+  .step-num {
+    display: inline-block;
+    background: #d4a843;
+    color: #0d1117;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 28px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    margin-right: 10px;
+  }
+  .check { color: #3fb950; }
+  .cmd { color: #79c0ff; }
+  .file { color: #d2a8ff; }
+  img { max-width: 100%; border-radius: 8px; border: 1px solid #30363d; margin: 12px 0; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>Atlas Fund Capital — Blog MCP Server</h1>
+<p class="subtitle">Push blog posts directly from Claude.ai to atlasfundcapital.com<br>
+Copy-paste, plug-and-play. No coding required.</p>
+
+<!-- ========== SECTION 1 ========== -->
+<h2>What This Does</h2>
+<p>You tell Claude <em>"Write a blog post about SBA loans"</em> and Claude writes it, formats it with proper headings, detects the right category, and publishes it live on your website — instantly. You only need to upload the featured image manually afterward.</p>
+
+<!-- ========== SECTION 2 ========== -->
+<h2>What You Need</h2>
+<ul>
+  <li>Your Ubuntu server where atlasfundcapital.com is hosted</li>
+  <li>SSH access to that server (PuTTY or Terminal)</li>
+  <li>5 minutes</li>
+</ul>
+
+<!-- ========== SECTION 3 ========== -->
+<h2>Step-by-Step Setup</h2>
+
+<div class="step">
+  <p><span class="step-num">1</span> <strong>SSH into your server</strong></p>
+  <p>Open Terminal (Mac/Linux) or PuTTY (Windows) and connect:</p>
+  <pre>ssh your-username@your-server-ip</pre>
+</div>
+
+<div class="step">
+  <p><span class="step-num">2</span> <strong>Go to your project folder</strong></p>
+  <pre>cd /path/to/your/loan_project</pre>
+  <p class="note">Replace <code>/path/to/your/loan_project</code> with the actual path where your Django project lives (where <code>manage.py</code> is).</p>
+</div>
+
+<div class="step">
+  <p><span class="step-num">3</span> <strong>Install the required Python packages</strong></p>
+  <pre>pip install -r requirements.txt</pre>
+  <p>If <code>pip</code> isn't found, try <code>pip3</code> instead.</p>
+</div>
+
+<div class="step">
+  <p><span class="step-num">4</span> <strong>Test the MCP server starts correctly</strong></p>
+  <pre>python mcp_blog_server.py</pre>
+  <p>You should see:</p>
+  <pre>Atlas Blog MCP Server starting on 0.0.0.0:8001
+MCP endpoint: http://0.0.0.0:8001/mcp/blog</pre>
+  <p>Press <code>Ctrl+C</code> to stop it. If it starts without errors, you're good.</p>
+</div>
+
+<div class="step">
+  <p><span class="step-num">5</span> <strong>Set it up to run 24/7 as a systemd service</strong></p>
+  <p>Create a service file so the MCP server auto-starts and stays running even after reboots:</p>
+  <pre>sudo nano /etc/systemd/system/mcp-blog.service</pre>
+  <p>Paste this in <strong>(edit the paths to match your setup)</strong>:</p>
+  <pre>[Unit]
+Description=Atlas Fund Capital Blog MCP Server
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=<span class="file">/var/www/loan_project</span>
+Environment=SITE_URL=https://atlasfundcapital.com
+Environment=MCP_PORT=8001
+ExecStart=<span class="cmd">/usr/bin/python3</span> <span class="file">/var/www/loan_project/mcp_blog_server.py</span>
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target</pre>
+  <p class="note"><strong>IMPORTANT:</strong> Change <code>/var/www/loan_project</code> to your actual project path. Change <code>/usr/bin/python3</code> to your Python path (find it with <code>which python3</code>). Change <code>www-data</code> to the user your Django app runs as.</p>
+  <p>Save and exit (<code>Ctrl+O</code>, <code>Enter</code>, <code>Ctrl+X</code>), then:</p>
+  <pre>sudo systemctl daemon-reload
+sudo systemctl enable mcp-blog
+sudo systemctl start mcp-blog
+sudo systemctl status mcp-blog</pre>
+  <p>You should see <span class="check">active (running)</span> in green.</p>
+</div>
+
+<div class="step">
+  <p><span class="step-num">6</span> <strong>Add Nginx reverse proxy</strong></p>
+  <p>This makes <code>https://atlasfundcapital.com/mcp/blog</code> point to the MCP server running on port 8001.</p>
+  <p>Open your Nginx config:</p>
+  <pre>sudo nano /etc/nginx/sites-available/atlasfundcapital</pre>
+  <p>Add this block <strong>before the existing <code>location /</code> block</strong>:</p>
+  <pre># --- MCP Blog Server ---
+location /mcp/blog {
+    proxy_pass http://127.0.0.1:8001;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_read_timeout 86400s;
+    proxy_send_timeout 86400s;
+    proxy_buffering off;
+}</pre>
+  <p class="note">The long timeouts are necessary — Claude keeps an SSE connection open. Without them, Nginx will cut the connection after 60 seconds.</p>
+  <p>Test and reload Nginx:</p>
+  <pre>sudo nginx -t
+sudo systemctl reload nginx</pre>
+</div>
+
+<div class="step">
+  <p><span class="step-num">7</span> <strong>Verify it's publicly accessible</strong></p>
+  <pre>curl https://atlasfundcapital.com/mcp/blog</pre>
+  <p>You should get a JSON response (not a 404). If you get a Django 404 page, the proxy isn't routing correctly — double-check the nginx location block is placed <em>before</em> the Django proxy pass.</p>
+</div>
+
+<div class="step">
+  <p><span class="step-num">8</span> <strong>Connect Claude.ai</strong></p>
+  <ol>
+    <li>Open <a href="https://claude.ai" target="_blank">claude.ai</a> in your browser</li>
+    <li>Click your profile icon (bottom-left) → <strong>Settings</strong></li>
+    <li>Go to the <strong>Developer</strong> tab</li>
+    <li>Click <strong>Edit Config</strong> or <strong>Manage MCP Servers</strong></li>
+    <li>Click <strong>Add Server</strong></li>
+    <li>Fill in:
+      <ul>
+        <li><strong>Name:</strong> <code>Atlas Blog</code></li>
+        <li><strong>URL:</strong> <code>https://atlasfundcapital.com/mcp/blog</code></li>
+        <li><strong>Transport:</strong> <code>Streamable HTTP</code></li>
+      </ul>
+    </li>
+    <li>Click <strong>Save</strong></li>
+  </ol>
+  <p>You should see a green checkmark and two tools listed: <code>create_blog_post</code> and <code>list_recent_posts</code>.</p>
+</div>
+
+<!-- ========== SECTION 4 ========== -->
+<h2>How to Use It</h2>
+
+<div class="step">
+  <p><span class="step-num">A</span> <strong>Create a blog post</strong></p>
+  <p>In any Claude conversation, just ask:</p>
+  <pre>Write a blog post about how SBA 7a loans help small businesses get working capital. Format it with H1 and H2 headings, and publish it to the blog.</pre>
+  <p>Claude will write the post with proper HTML formatting and call the <code>create_blog_post</code> tool automatically. It detects the category (e.g., "SBA Loans"), generates the excerpt, and publishes it instantly.</p>
+  <p>Claude will respond with the published URL, like:</p>
+  <pre>Blog post created and published successfully!
+
+Title: "How SBA 7a Loans Fuel Small Business Growth"
+Category: SBA Loans (auto-detected)
+URL: https://atlasfundcapital.com/blog/how-sba-7a-loans-fuel-small-business-growth/</pre>
+</div>
+
+<div class="step">
+  <p><span class="step-num">B</span> <strong>Upload the featured image</strong></p>
+  <p>Claude can't generate images. Go to your admin panel:</p>
+  <pre>https://atlasfundcapital.com/superadmin/blog/</pre>
+  <p>Click <strong>Edit</strong> on the new post, upload a featured image, and save.</p>
+</div>
+
+<div class="step">
+  <p><span class="step-num">C</span> <strong>See your recent posts</strong></p>
+  <p>Ask Claude:</p>
+  <pre>Show me the last 5 blog posts</pre>
+  <p>Claude will call <code>list_recent_posts</code> and show you what's live.</p>
+</div>
+
+<!-- ========== SECTION 5 ========== -->
+<h2>Troubleshooting</h2>
+
+<table style="width:100%; border-collapse:collapse; margin:12px 0;">
+<tr style="background:#161b22;">
+  <th style="padding:10px; text-align:left; color:#d4a843;">Problem</th>
+  <th style="padding:10px; text-align:left; color:#d4a843;">Fix</th>
+</tr>
+<tr style="border-bottom:1px solid #21262d;">
+  <td style="padding:10px; vertical-align:top;">MCP server won't start</td>
+  <td style="padding:10px;"><code>sudo journalctl -u mcp-blog -n 50</code> to see the error log. Usually a wrong Python path or missing dependency.</td>
+</tr>
+<tr style="border-bottom:1px solid #21262d;">
+  <td style="padding:10px; vertical-align:top;">404 from /mcp/blog</td>
+  <td style="padding:10px;">The Nginx <code>location /mcp/blog</code> block must come <strong>before</strong> the <code>location /</code> block that proxies to Django. Order matters in Nginx.</td>
+</tr>
+<tr style="border-bottom:1px solid #21262d;">
+  <td style="padding:10px; vertical-align:top;">Claude says "tool not found"</td>
+  <td style="padding:10px;">Restart the MCP server: <code>sudo systemctl restart mcp-blog</code>. Then reconnect in Claude.ai settings.</td>
+</tr>
+<tr style="border-bottom:1px solid #21262d;">
+  <td style="padding:10px; vertical-align:top;">Connection drops frequently</td>
+  <td style="padding:10px;">Make sure <code>proxy_read_timeout 86400s</code> is in your Nginx config. Without it, Nginx kills the connection after 60s.</td>
+</tr>
+<tr>
+  <td style="padding:10px; vertical-align:top;">"Cannot call from async context" error</td>
+  <td style="padding:10px;">Install asgiref: <code>pip install asgiref</code>. The latest <code>mcp_blog_server.py</code> already uses <code>sync_to_async</code>.</td>
+</tr>
+</table>
+
+<!-- ========== SECTION 6 ========== -->
+<h2>Quick Reference</h2>
+
+<h3>Useful Commands</h3>
+<pre><span class="cmd"># Check MCP server status</span>
+sudo systemctl status mcp-blog
+
+<span class="cmd"># Restart after code changes</span>
+sudo systemctl restart mcp-blog
+
+<span class="cmd"># View live logs</span>
+sudo journalctl -u mcp-blog -f
+
+<span class="cmd"># Test the endpoint locally</span>
+curl http://localhost:8001/mcp/blog</pre>
+
+<h3>Files You Need</h3>
+<ul>
+  <li><code>mcp_blog_server.py</code> — The MCP server (in your project root)</li>
+  <li><code>requirements.txt</code> — Python dependencies</li>
+  <li><code>/etc/systemd/system/mcp-blog.service</code> — Systemd service (you create this)</li>
+  <li>Nginx site config — Add the <code>/mcp/blog</code> location block</li>
+</ul>
+
+<p style="margin-top:40px; padding-top:20px; border-top:1px solid #21262d; color:#8b949e; font-size:0.85rem;">
+  Atlas Fund Capital · 444 Alaska Avenue Suite #BWM188, Torrance, CA 90503
+</p>
+
+</div>
+
+<script>
+document.querySelectorAll('pre').forEach(block => {
+  if (!block.querySelector('button')) {
+    const btn = document.createElement('button');
+    btn.textContent = 'Copy';
+    btn.addEventListener('click', () => {
+      const text = block.innerText.replace(/^Copy\n?/, '').trim();
+      navigator.clipboard.writeText(text).then(() => {
+        btn.textContent = 'Copied!';
+        setTimeout(() => btn.textContent = 'Copy', 1500);
+      });
+    });
+    block.prepend(btn);
+  }
+});
+</script>
+
+</body>
+</html>

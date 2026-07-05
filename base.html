@@ -6,6 +6,18 @@
 <meta name="google-adsense-account" content="ca-pub-3082327054031764">
 {% block meta %}{% endblock %}
   <title>{% block title %}Atlas Fund Capital{% endblock %}</title>
+  <!-- Capture landing source on first visit -->
+<script>
+(function(){
+  if (!document.cookie.split('; ').find(function(r){return r.startsWith('atlas_landing=')})) {
+    var data = JSON.stringify({
+      ref: document.referrer || 'direct',
+      landing: window.location.href
+    });
+    document.cookie = 'atlas_landing=' + encodeURIComponent(data) + ';path=/;max-age=2592000;SameSite=Lax';
+  }
+})();
+</script>
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-FHHXTY7KZV"></script>
 <script>
