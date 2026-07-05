@@ -1014,3 +1014,39 @@ def superadmin_brand_mention_delete(request, mention_id):
     mention = get_object_or_404(BrandMention, id=mention_id)
     mention.delete()
     return JsonResponse({'success': True})
+
+
+def sitemap(request):
+    static_pages = [
+        {'loc': 'https://atlasfundcapital.com/', 'priority': '1.0'},
+        {'loc': 'https://atlasfundcapital.com/about/', 'priority': '0.8'},
+        {'loc': 'https://atlasfundcapital.com/how-it-works/', 'priority': '0.8'},
+        {'loc': 'https://atlasfundcapital.com/faqs/', 'priority': '0.6'},
+        {'loc': 'https://atlasfundcapital.com/contact/', 'priority': '0.7'},
+        {'loc': 'https://atlasfundcapital.com/blog/', 'priority': '0.9'},
+        {'loc': 'https://atlasfundcapital.com/resources/', 'priority': '0.7'},
+        {'loc': 'https://atlasfundcapital.com/terms/', 'priority': '0.5'},
+        {'loc': 'https://atlasfundcapital.com/partners/', 'priority': '0.8'},
+    ]
+
+    posts = BlogPost.objects.filter(is_published=True).order_by('-published_at')
+
+    lines = ['<?xml version="1.0" encoding="UTF-8"?>']
+    lines.append('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">')
+
+    for page in static_pages:
+        lines.append('  <url>')
+        lines.append(f'    <loc>{page["loc"]}</loc>')
+        lines.append(f'    <priority>{page["priority"]}</priority>')
+        lines.append('  </url>')
+
+    for post in posts:
+        lines.append('  <url>')
+        lines.append(f'    <loc>https://atlasfundcapital.com{post.get_absolute_url()}</loc>')
+        lines.append(f'    <lastmod>{post.updated_at.strftime("%Y-%m-%d")}</lastmod>')
+        lines.append('    <priority>0.85</priority>')
+        lines.append('  </url>')
+
+    lines.append('</urlset>')
+
+    return HttpResponse('\n'.join(lines), content_type='application/xml')

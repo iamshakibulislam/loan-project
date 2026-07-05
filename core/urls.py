@@ -13,6 +13,7 @@ urlpatterns = [
     path('contact/', views.contact, name='contact'),
     path('blog/', views.blog, name='blog'),
     path('blog/<slug:slug>/', views.blog_post_detail, name='blog_post_detail'),
+    path('sitemap.xml', views.sitemap, name='sitemap'),
     path('resources/', views.resources, name='resources'),
     path('terms/', views.terms, name='terms'),
     path('partners/', views.partner_detail, name='partner_detail'),
