@@ -130,11 +130,17 @@
         if (landingCookie) {
           try { landing = JSON.parse(decodeURIComponent(landingCookie.split('=')[1])); } catch(e) {}
         }
-        gtag('event', 'lead_submitted', {
+        var eventParams = {
           referral_source: landing.ref,
           landing_page: landing.landing,
           form_type: 'contact'
-        });
+        };
+        if (typeof gtag === 'function') {
+          gtag('event', 'generate_lead', eventParams);
+          console.log('[GA] generate_lead fired:', eventParams);
+        } else {
+          console.warn('[GA] gtag not available — event not sent:', eventParams);
+        }
         fb.className = 'form-feedback success';
         fb.textContent = data.message;
         this.reset();
