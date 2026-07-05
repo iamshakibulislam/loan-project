@@ -112,6 +112,10 @@
 
 {% block extra_scripts %}
 <script>
+  function getCookie(name) {
+    var cookie = document.cookie.split('; ').find(function(r) { return r.startsWith(name + '='); });
+    return cookie ? decodeURIComponent(cookie.split('=')[1]) : '';
+  }
   document.getElementById('contactForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     var btn = document.getElementById('submitBtn');
@@ -125,14 +129,10 @@
       var res = await fetch('/contact/', { method: 'POST', body: fd });
       var data = await res.json();
       if (data.success) {
-        var landing = { ref: 'direct', landing: window.location.href };
-        var landingCookie = document.cookie.split('; ').find(function(r){return r.startsWith('atlas_landing=')});
-        if (landingCookie) {
-          try { landing = JSON.parse(decodeURIComponent(landingCookie.split('=')[1])); } catch(e) {}
-        }
+        var landing = { ref: getCookie('atlas_src') || 'direct', landing: getCookie('atlas_landing') || window.location.href };
         var eventParams = {
-          referral_source: landing.ref || 'direct',
-          landing_page: landing.landing || window.location.href,
+          referral_source: landing.ref,
+          landing_page: landing.landing,
           form_type: 'contact'
         };
         if (typeof gtag === 'function') {
