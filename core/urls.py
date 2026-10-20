@@ -7,6 +7,7 @@ from atlas import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.home, name='home'),
+    path('apply/', views.apply, name='apply'),
     path('about/', views.about, name='about'),
     path('how-it-works/', views.how_it_works, name='how_it_works'),
     path('faqs/', views.faqs, name='faqs'),
@@ -16,6 +17,7 @@ urlpatterns = [
     path('sitemap.xml', views.sitemap, name='sitemap'),
     path('resources/', views.resources, name='resources'),
     path('terms/', views.terms, name='terms'),
+    path('privacy/', views.privacy, name='privacy'),
     path('partners/', views.partner_detail, name='partner_detail'),
     path('product/<slug:slug>/', views.product_page, name='product_page'),
     path('api/submit-lead/', views.submit_lead, name='submit_lead'),

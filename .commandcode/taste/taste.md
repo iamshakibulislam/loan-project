@@ -30,10 +30,9 @@
 - For admin CRUD operations (status change, edit, delete, add), update the DOM directly — do NOT use page reloads. All changes should reflect instantly inline. Confidence: 0.70
 - Sidebar toggle must not cover logo or main content; when sidebar is open, main content area should resize/shift accordingly (not overlay). Confidence: 0.65
 
-# Hero Section
-- Include a multi-step lead capture form in the hero: Step 1 asks "How much money do you need?" and "Monthly revenue", with a "Get Qualified" button. Step 2 reveals credit score and time-in-business fields. Step 3 reveals name, email, company, phone with a consent checkbox (agreement to receive texts/emails, automated/AI-assisted technology notice, consent not a condition, opt-out anytime) and Submit button. Confidence: 0.85
-- Hero form fields use text inputs (type manually) — not select dropdowns — except for time-in-business which remains a dropdown. All fields are required. Confidence: 0.70
-
+# Lead / Application Form
+See [lead-/-application-form/taste.md](lead-/-application-form/taste.md)
+- Acceptance of the Terms & Conditions and Privacy Policy must be its own separate, required checkbox — distinct from (and not merged into) the SMS/email opt-in checkboxes. Confidence: 0.75
 # Tooling
 - Use Python (not Node.js) for new tooling, infrastructure, or servers in this Django/Python project. Confidence: 0.70
 

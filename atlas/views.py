@@ -38,6 +38,9 @@ def home(request):
     recent_posts = BlogPost.objects.filter(is_published=True).order_by('-published_at')[:4]
     return render(request, 'index.html', {'recent_posts': recent_posts})
 
+def apply(request):
+    return render(request, 'pages/apply.html')
+
 def about(request):
     return render(request, 'pages/about.html')
 
@@ -99,6 +102,9 @@ def resources(request):
 def terms(request):
     return render(request, 'pages/terms.html')
 
+def privacy(request):
+    return render(request, 'pages/privacy.html')
+
 def product_page(request, slug):
     templates = {
         'merchant-cash-advance': 'pages/merchant-cash-advance.html',
@@ -121,6 +127,9 @@ def partner_detail(request):
 @require_POST
 @csrf_exempt
 def submit_lead(request):
+    sms_transactional_consent = request.POST.get('sms_transactional_consent') == 'on'
+    sms_marketing_consent = request.POST.get('sms_marketing_consent') == 'on'
+    email_consent = request.POST.get('email_consent') == 'on'
     data = {
         'funding_amount': request.POST.get('funding_amount', ''),
         'monthly_revenue': request.POST.get('monthly_revenue', ''),
@@ -130,7 +139,11 @@ def submit_lead(request):
         'email': request.POST.get('email', ''),
         'company_name': request.POST.get('company_name', ''),
         'phone': request.POST.get('phone', ''),
-        'consent': request.POST.get('consent') == 'on',
+        'consent': sms_transactional_consent or sms_marketing_consent or email_consent,
+        'sms_transactional_consent': sms_transactional_consent,
+        'sms_marketing_consent': sms_marketing_consent,
+        'email_consent': email_consent,
+        'terms_consent': request.POST.get('terms_consent') == 'on',
     }
     if not data['full_name'] or not data['email']:
         return JsonResponse({'success': False, 'error': 'Required fields missing.'}, status=400)
@@ -1019,6 +1032,7 @@ def superadmin_brand_mention_delete(request, mention_id):
 def sitemap(request):
     static_pages = [
         {'loc': 'https://atlasfundcapital.com/', 'priority': '1.0'},
+        {'loc': 'https://atlasfundcapital.com/apply/', 'priority': '0.9'},
         {'loc': 'https://atlasfundcapital.com/about/', 'priority': '0.8'},
         {'loc': 'https://atlasfundcapital.com/how-it-works/', 'priority': '0.8'},
         {'loc': 'https://atlasfundcapital.com/faqs/', 'priority': '0.6'},
@@ -1026,6 +1040,7 @@ def sitemap(request):
         {'loc': 'https://atlasfundcapital.com/blog/', 'priority': '0.9'},
         {'loc': 'https://atlasfundcapital.com/resources/', 'priority': '0.7'},
         {'loc': 'https://atlasfundcapital.com/terms/', 'priority': '0.5'},
+        {'loc': 'https://atlasfundcapital.com/privacy/', 'priority': '0.5'},
         {'loc': 'https://atlasfundcapital.com/partners/', 'priority': '0.8'},
     ]
 

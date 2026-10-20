@@ -58,6 +58,10 @@ class Lead(models.Model):
     company_name = models.CharField(max_length=255)
     phone = models.CharField(max_length=30)
     consent = models.BooleanField(default=False)
+    sms_transactional_consent = models.BooleanField(default=False)
+    sms_marketing_consent = models.BooleanField(default=False)
+    email_consent = models.BooleanField(default=False)
+    terms_consent = models.BooleanField(default=False)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     notes = models.TextField(blank=True)
     source = models.CharField(max_length=20, default='direct', choices=[

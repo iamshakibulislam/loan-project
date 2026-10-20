@@ -595,6 +595,48 @@ h4 { font-family: var(--font); font-size: 1.05rem; font-weight: 600; }
   color: #d4b44c;
 }
 
+/* Consent Group */
+.consent-group {
+  margin-top: 28px;
+  text-align: left;
+}
+
+.consent-title {
+  font-family: var(--font);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.85);
+  margin-bottom: 4px;
+}
+
+.consent-note {
+  font-family: var(--font);
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.45);
+  line-height: 1.6;
+  margin-bottom: 8px;
+}
+
+.consent-group .form-consent {
+  margin: 12px 0;
+}
+
+.consent-group .form-consent label strong {
+  color: rgba(255,255,255,0.8);
+  font-weight: 600;
+}
+
+.consent-agreement {
+  margin-top: 8px;
+  border-color: rgba(201,168,76,0.22);
+  background: rgba(201,168,76,0.05);
+}
+
+.consent-agreement label {
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.7);
+}
+
 /* Success Message */
 .form-success {
   display: none;

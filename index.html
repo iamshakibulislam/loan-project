@@ -49,7 +49,7 @@
       </nav>
       <div class="header-ctas">
         <a href="/partner/login/" class="btn btn-outline">Partner Login</a>
-        <a href="#heroForm" class="btn btn-gold">Apply Now</a>
+        <a href="/apply/" class="btn btn-gold">Apply Now</a>
       </div>
       <button class="mobile-toggle" id="mobileToggle" aria-label="Menu"><span></span><span></span><span></span></button>
     </div>
@@ -69,12 +69,12 @@
       <a href="/resources/" class="nav-link">Resources</a>
       <a href="/blog/" class="nav-link">Insights</a>
       <a href="/partner/login/" class="nav-link">Partner Login</a>
-      <a href="#heroForm" class="nav-link" style="color:var(--accent);font-weight:700;">Apply Now</a>
+      <a href="/apply/" class="nav-link" style="color:var(--accent);font-weight:700;">Apply Now</a>
     </div>
   </header>
 
-  <!-- Hero with Multi-Step Lead Capture -->
-  <section class="hero" id="heroForm">
+  <!-- Hero -->
+  <section class="hero">
     <div class="hero-orb orb-1"></div>
     <div class="hero-orb orb-2"></div>
     <div class="hero-orb orb-3"></div>
@@ -82,72 +82,7 @@
       <div class="hero-form-wrapper">
         <h1>Capital that moves at the <em>speed of your ambition.</em></h1>
         <p class="hero-subtitle">Business funding up to $20 million. Discover your options in under 60 seconds.</p>
-
-        <!-- Step 1: Amount + Revenue -->
-        <div class="form-step active" data-step="1">
-          <div class="form-field">
-            <label for="fundingAmount">How much money do you need?</label>
-            <input type="text" id="fundingAmount" placeholder="e.g. $150,000" required>
-          </div>
-          <div class="form-field">
-            <label for="monthlyRevenue">How much revenue does your business generate per month?</label>
-            <input type="text" id="monthlyRevenue" placeholder="e.g. $45,000" required>
-          </div>
-          <button class="btn btn-gold btn-lg form-next" type="button">Get Qualified</button>
-        </div>
-
-        <!-- Step 2: Credit Score + Time in Business -->
-        <div class="form-step" data-step="2">
-          <div class="form-field">
-            <label for="creditScore">What is your credit score?</label>
-            <input type="text" id="creditScore" placeholder="e.g. 680" required>
-          </div>
-          <div class="form-field">
-            <label for="timeInBusiness">How long have you been in business?</label>
-            <select id="timeInBusiness">
-              <option value="">Select time in business</option>
-              <option value="0-6">0 – 6 Months</option>
-              <option value="6-12">6 – 12 Months</option>
-              <option value="1-2">1 – 2 Years</option>
-              <option value="2-5">2 – 5 Years</option>
-              <option value="5-plus">5+ Years</option>
-            </select>
-          </div>
-          <button class="btn btn-gold btn-lg form-next" type="button">Continue</button>
-        </div>
-
-        <!-- Step 3: Contact Details + Consent -->
-        <div class="form-step" data-step="3">
-          <div class="form-field">
-            <label for="fullName">Full Name</label>
-            <input type="text" id="fullName" placeholder="John Smith" required>
-          </div>
-          <div class="form-field">
-            <label for="email">Email Address</label>
-            <input type="email" id="email" placeholder="john@yourcompany.com" required>
-          </div>
-          <div class="form-field">
-            <label for="companyName">Company Name</label>
-            <input type="text" id="companyName" placeholder="Your Business, Inc." required>
-          </div>
-          <div class="form-field">
-            <label for="phone">Phone Number</label>
-            <input type="tel" id="phone" placeholder="(555) 000-0000" required>
-          </div>
-          <div class="form-consent">
-            <input type="checkbox" id="consent" required>
-            <label for="consent">I agree to receive texts and emails from Atlas Fund Capital regarding my business loan inquiry. I understand you may use automated or AI-assisted technology to contact me. I understand my consent is not a condition of obtaining services and I can opt out at any time. <a href="/terms/">Terms &amp; Conditions</a></label>
-          </div>
-          <button class="btn btn-gold btn-lg" type="submit" id="formSubmit">Submit</button>
-        </div>
-
-        <!-- Success Message -->
-        <div class="form-success" style="display:none;">
-          <h3>Your submission has been received.</h3>
-          <p>A funding specialist from Atlas Fund Capital will review your details and reach out within one business day. No obligation, no impact to your credit.</p>
-        </div>
-
-        <div class="form-progress">Step 1 of 3</div>
+        <a href="/apply/" class="btn btn-gold btn-lg">Apply Now</a>
       </div>
     </div>
   </section>
@@ -339,7 +274,7 @@
         </div>
         <div class="faq-item">
           <div class="faq-question">How does the process actually work? <span class="faq-toggle">▼</span></div>
-          <div class="faq-answer">You begin by completing the qualification form above — it takes roughly ninety seconds. A senior funding advisor reviews your profile, identifies the institutions in our consortium best positioned to serve your needs, and presents curated options. You choose the path that fits. Most clients receive capital within one to three business days of final approval.</div>
+          <div class="faq-answer">You begin by clicking Apply Now and completing our qualification form — it takes roughly ninety seconds. A senior funding advisor reviews your profile, identifies the institutions in our consortium best positioned to serve your needs, and presents curated options. You choose the path that fits. Most clients receive capital within one to three business days of final approval.</div>
         </div>
         <div class="faq-item">
           <div class="faq-question">What do I need to qualify? <span class="faq-toggle">▼</span></div>
@@ -365,7 +300,7 @@
     <div class="container">
       <h2>The capital your business deserves is waiting.</h2>
       <p>Take sixty seconds to discover your options. No commitment. No credit impact. Just clarity.</p>
-      <a href="#heroForm" class="btn btn-gold btn-lg">Begin Qualification</a>
+      <a href="/apply/" class="btn btn-gold btn-lg">Begin Qualification</a>
     </div>
   </section>
 
@@ -420,7 +355,7 @@
           <ul>
             <li><a href="/contact/">Contact Us</a></li>
             <li><a href="/faqs/">FAQ</a></li>
-            <li><a href="#heroForm">Apply Now</a></li>
+            <li><a href="/apply/">Apply Now</a></li>
           </ul>
         </div>
       </div>
@@ -428,7 +363,7 @@
         <span>&copy; 2026 Atlas Fund Capital. All rights reserved.</span>
         <div class="footer-bottom-links">
           <a href="/terms/">Terms of Use</a>
-          <a href="#">Privacy Policy</a>
+          <a href="/privacy/">Privacy Policy</a>
           <a href="#">Cookie Policy</a>
         </div>
       </div>
