@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block meta %}<meta name="description" content="Apply for business funding up to $20 million with Atlas Fund Capital. One quick application that takes under 60 seconds. No credit impact, no obligation.">{% endblock %}
+
+{% block title %}Apply Now | Atlas Fund Capital{% endblock %}
+
+{% block content %}
+<!-- Apply — Lead Capture Form -->
+<section class="hero" id="heroForm">
+  <div class="hero-orb orb-1"></div>
+  <div class="hero-orb orb-2"></div>
+  <div class="hero-orb orb-3"></div>
+  <div class="container">
+    <div class="hero-form-wrapper">
+      <h1>Your application begins <em>here.</em></h1>
+      <p class="hero-subtitle">Business funding up to $20 million. Complete the form below — it takes under 60 seconds.</p>
+
+      <div class="form-step active">
+        <div class="form-field">
+          <label for="fundingAmount">How much money do you need?</label>
+          <input type="text" id="fundingAmount" placeholder="e.g. $150,000" required>
+        </div>
+        <div class="form-field">
+          <label for="monthlyRevenue">How much revenue does your business generate per month?</label>
+          <input type="text" id="monthlyRevenue" placeholder="e.g. $45,000" required>
+        </div>
+        <div class="form-field">
+          <label for="creditScore">What is your credit score?</label>
+          <input type="text" id="creditScore" placeholder="e.g. 680" required>
+        </div>
+        <div class="form-field">
+          <label for="timeInBusiness">How long have you been in business?</label>
+          <select id="timeInBusiness">
+            <option value="">Select time in business</option>
+            <option value="0-6">0 – 6 Months</option>
+            <option value="6-12">6 – 12 Months</option>
+            <option value="1-2">1 – 2 Years</option>
+            <option value="2-5">2 – 5 Years</option>
+            <option value="5-plus">5+ Years</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label for="fullName">Full Name</label>
+          <input type="text" id="fullName" placeholder="John Smith" required>
+        </div>
+        <div class="form-field">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" placeholder="john@yourcompany.com" required>
+        </div>
+        <div class="form-field">
+          <label for="companyName">Company Name</label>
+          <input type="text" id="companyName" placeholder="Your Business, Inc." required>
+        </div>
+        <div class="form-field">
+          <label for="phone">Phone Number</label>
+          <input type="tel" id="phone" placeholder="(555) 000-0000" required>
+        </div>
+        <div class="consent-group">
+          <p class="consent-title">Communication Preferences</p>
+          <p class="consent-note">Optional — choose how you'd like to hear from Atlas Fund Capital. Consent is not a condition of obtaining services, and you can opt out at any time.</p>
+
+          <div class="form-consent">
+            <input type="checkbox" id="smsTransactionalConsent">
+            <label for="smsTransactionalConsent"><strong>Text messages — transactional.</strong> By checking this box and submitting this form, you consent to receive transactional text messages regarding your business financing inquiry from Atlas Fund Capital. These messages may be delivered using automated or AI-assisted technology. Message frequency may vary. Standard message and data rates may apply. Reply STOP to opt out. Reply HELP for help. View our <a href="/terms/">Terms &amp; Conditions</a> and <a href="/privacy/">Privacy Policy</a>.</label>
+          </div>
+
+          <div class="form-consent">
+            <input type="checkbox" id="smsMarketingConsent">
+            <label for="smsMarketingConsent"><strong>Text messages — marketing.</strong> By checking this box and submitting this form, you consent to receive marketing text messages from Atlas Fund Capital. Message frequency may vary. Standard message and data rates may apply. Reply STOP to opt out. Reply HELP for help. View our <a href="/terms/">Terms &amp; Conditions</a> and <a href="/privacy/">Privacy Policy</a>.</label>
+          </div>
+
+          <div class="form-consent">
+            <input type="checkbox" id="emailConsent">
+            <label for="emailConsent"><strong>Email.</strong> By checking this box and submitting this form, you consent to receive email communications from Atlas Fund Capital regarding your business financing inquiry. You may unsubscribe at any time. View our <a href="/terms/">Terms &amp; Conditions</a> and <a href="/privacy/">Privacy Policy</a>.</label>
+          </div>
+        </div>
+
+        <div class="form-consent consent-agreement">
+          <input type="checkbox" id="termsConsent" required>
+          <label for="termsConsent">I have read and agree to the <a href="/terms/">Terms &amp; Conditions</a> and the <a href="/privacy/">Privacy Policy</a>.</label>
+        </div>
+
+        <button class="btn btn-gold btn-lg" type="submit" id="formSubmit">Submit</button>
+      </div>
+
+      <!-- Success Message -->
+      <div class="form-success" style="display:none;">
+        <h3>Your submission has been received.</h3>
+        <p>A funding specialist from Atlas Fund Capital will review your details and reach out within one business day. No obligation, no impact to your credit.</p>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

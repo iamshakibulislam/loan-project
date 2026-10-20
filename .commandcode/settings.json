@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Shell(python manage.py check 2 >& 1)",
+      "Shell(ls -a /home/shakil/Desktop/projects/loanproject | grep -iE 'venv|env|virtualenv'; echo '---'; ls /home/shakil/Desktop/projects/ 2>/dev/null; echo '--- parent dirs ---'; find /home/shakil/Desktop/projects -maxdepth 2 -name 'activate' -path '*bin*' 2>/dev/null)",
+      "Shell(head -5 server.log runserver.log 2>/dev/null; echo '---'; grep -rn 'python' /home/shakil/Desktop/projects/loanproject/*.log 2>/dev/null | head; echo '--- which ---'; which python python3; python3 -c 'import django; print(django.get_version())' 2>&1 | head)",
+      "Shell(find:*)",
+      "Shell(pip:*)",
+      "Shell(pip3:*)",
+      "Shell(ls:*)",
+      "Shell(ls -la /home/shakil/Desktop/projects/loanproject/staticfiles/js/ /home/shakil/Desktop/projects/loanproject/js/ 2>/dev/null; echo '--- diff ---'; diff /home/shakil/Desktop/projects/loanproject/js/main.js /home/shakil/Desktop/projects/loanproject/staticfiles/js/main.js && echo IDENTICAL)",
+      "Shell(cp:*)",
+      "Shell(node --check /home/shakil/Desktop/projects/loanproject/js/main.js)",
+      "Shell(node --check js/main.js)",
+      "Shell(python3 -m py_compile atlas/views.py atlas/models.py atlas/migrations/0010_lead_consent_fields.py core/urls.py)",
+      "Shell(cd /home/shakil/Desktop/projects/loanproject && python3 - <<'PY' import re def check(path): s = open(path).read() # strip django template tags/comment s2 = re.sub(r'{%.*?%}', '', s, flags=re.S) s2 = re.sub(r'{{.*?}}', '', s2, flags=re.S) for tag in ['div','section','ul','li','label','p']: o = len(re.findall(r'<%s[ >]' % tag, s2)) c = len(re.findall(r'</%s>' % tag, s2)) flag = 'OK' if o == c else 'MISMATCH' print(f'{path}: <{tag}> open={o} close={c} {flag}') print() check('pages/apply.html') check('pages/privacy.html') # checkbox ids referenced by JS must exist in the form js = open('js/main.js').read() form = open('pages/apply.html').read() ids = re.findall(r\"getElementById\\('([^']+)'\\)\", js) print('JS element ids:', ids) for i in ids: print(' ', i, 'present in apply.html' if f'id=\"{i}\"' in form else 'MISSING') PY)",
+      "Shell(cd /home/shakil/Desktop/projects/loanproject && cp css/style.css staticfiles/css/style.css && cp js/main.js staticfiles/js/main.js && node --check js/main.js && python3 -m py_compile atlas/views.py atlas/models.py atlas/migrations/0011_lead_terms_consent.py && echo 'SYNTAX OK' && python3 - <<'PY' import re js = open('js/main.js').read() form = open('pages/apply.html').read() for i in re.findall(r\"getElementById\\('([^']+)'\\)\", js): if i in ('mobileToggle','mobileMenu'): continue print(i, 'OK' if f'id=\"{i}\"' in form else 'MISSING') s = re.sub(r'{%.*?%}','',form,flags=re.S) print('div', len(re.findall(r'<div[ >]',s)), len(re.findall(r'</div>',s))) print('checkbox ids unchecked:', 'checked' not in ''.join(re.findall(r'<input type=\"checkbox\"[^>]*>', form))) PY)"
+    ],
+    "deny": [],
+    "defaultMode": "default"
+  }
+}
